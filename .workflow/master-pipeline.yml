@@ -1,0 +1,17 @@
+version: '1.0'
+name: pipeline-20211008
+displayName: pipeline-20211008
+stages:
+  - stage: ''
+    name: stage_name_24
+    displayName: stage_display_name_25
+    steps:
+      - step: shell@agent
+        name: shell_agent_42
+        displayName: 执行 shell
+        script: sh deploy.sh
+triggers:
+  push:
+    branches:
+      include:
+        - master
