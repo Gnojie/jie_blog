@@ -64,7 +64,7 @@
 - 优化性能
 
 ### 15. 用vNode描述一个dom结构
-![5f604da2d0b8a32f36d6ee7242a94f0f.png](evernotecid://A8CC14F8-F351-4473-9E82-5EFAB88A4F7D/appyinxiangcom/18783918/ENResource/p1757)
+<!-- ![5f604da2d0b8a32f36d6ee7242a94f0f.png](evernotecid://A8CC14F8-F351-4473-9E82-5EFAB88A4F7D/appyinxiangcom/18783918/ENResource/p1757) -->
 ### 16. 监听data变化的核心API
 - `Object.defineProperty`
 - 深度监听原理,监听数组的实现
