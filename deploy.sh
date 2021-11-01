@@ -13,7 +13,7 @@ cd docs/.vitepress/dist
 # echo 'www.example.com' > CNAME
 
 git init
-git add -A
+git add .
 git commit -m 'deploy'
 
 # 如果部署到 https://<USERNAME>.github.io
