@@ -69,7 +69,7 @@ npx cowsay "你好"
 > 帮助创建项目的工具，都是下载项目模版和安装项目所需的依赖而已，这能怎么提升速度呢？
 
 
-## 开始实现
+## 实现步骤分析
 以上只是简化了安装脚手架依赖的初始化步骤
 开始询问式配置并创建项目文件夹和文件才是重点
 
@@ -83,10 +83,61 @@ npx cowsay "你好"
 3. ts需要修改所有js文件的后缀成ts
 4. 代码生成readme文件内容
 
-### 实现问答式配置
+## 一、初始化项目
+新建文件夹，运行指令
+```bash
+npm init -y
+```
+在`package.json`中添加配置
+```json
+{
+  "type": "module"
+}
+```
+👆从nodejs13开始,配置后(默认type为`commonjs`)内置ES Module模块化规范(以前只支持Commonjs)
+> ES Module和Commonjs的区别，请看[这里]()
+
+`package.json`配置运行脚本
+```json
+{
+  "script": {
+    "dev": "node index.js"
+  }
+}
+```
+## 二、实现问答式配置
+问答配置主要依赖于[prompts库](https://github.com/terkelg/prompts#readme)
+![prompts介绍](../../static/img/vue/prompts介绍.jpg)
+
+```js
+const qaList = [
+  {
+    name: 'projectName', // 生成数据的keyName
+    type: 'text',
+    message: 'Project name:', // 问答的问题
+    initial: 'defualtVal', // 初始值
+    onState: (state) => (targetDir = String(state.value).trim())
+  },
+]
+
+async function init() {
+  const res = await prompts(qaList)
+  console.log(res) // { projectName: '输入的值' }
+}
+init();
+```
+## 三、兼容指令配置,跳过问答
+
+## 项目名重复,询问覆盖
+
+## 根据问答数据生成模版文件
+## 替换js模版成ts
+> 只用换文件后缀就可以了吗
+
+## 从0编写生成readme文件
 
 
-
+---
 
 ## git clone项目把提交记录也保留下来
 

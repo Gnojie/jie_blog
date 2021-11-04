@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# 运行 sh deploy.sh
+
 # 忽略错误
 set -e
 
