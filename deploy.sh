@@ -13,7 +13,7 @@ cd docs/.vitepress/dist
 
 # 如果是发布到自定义域名
 # echo 'www.example.com' > CNAME
-
+# rm -rf .git
 git init
 git add .
 git commit -m 'deploy'

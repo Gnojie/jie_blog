@@ -1,4 +1,4 @@
-[toc]
+[[toc]]
 
 ## create-vue脚手架
 > 参考文章[Vue 团队公开快如闪电的全新脚手架工具 create-vue，未来将替代 Vue-CLI，才300余行代码](https://juejin.cn/post/7018344866811740173)
@@ -95,7 +95,7 @@ npm init -y
 }
 ```
 👆从nodejs13开始,配置后(默认type为`commonjs`)内置ES Module模块化规范(以前只支持Commonjs)
-> ES Module和Commonjs的区别，请看[这里]()
+> ES Module和Commonjs的区别，请看这里
 
 `package.json`配置运行脚本
 ```json
@@ -107,7 +107,7 @@ npm init -y
 ```
 ## 二、实现问答式配置
 问答配置主要依赖于[prompts库](https://github.com/terkelg/prompts#readme)
-![prompts介绍](../../static/img/vue/prompts介绍.jpg)
+<!-- ![prompts介绍](/static/img/vue/prompts介绍.jpg) -->
 
 ```js
 const qaList = [

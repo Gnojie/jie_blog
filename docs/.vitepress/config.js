@@ -22,12 +22,22 @@ module.exports = {
           text: 'vue',
           children: [
             { text: 'router实现原理', link: '/vue/vue-router实现原理' },
+            { text: 'create-vue脚手架', link: '/vue/create-vue脚手架' },
+            { text: 'esbild使用', link: '/vue/esbild使用' },
+          ],
+        },
+        {
+          text: 'js',
+          children: [
+            { text: '前端模块化', link: '/js/前端模块化' },
           ],
         },
         {
           text: '每周学习整理',
           children: [
             { text: '202110-1', link: '/week/202110-1' },
+            { text: '202110-2', link: '/week/202110-2' },
+            { text: '202111-1', link: '/week/202111-1' },
           ],
         },
       ],
