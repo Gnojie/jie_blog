@@ -1,0 +1,501 @@
+前端模块化直接使用多个script引入文件
+
+- 容易造成变量污染(无意声明相同变量造成使用时不是预期变量)
+
+- js文件之间有依赖关系时，因为不能在js中引js，只能统一写到script引入，需要注意顺序问题。而且被依赖的js一般不希望被其他js调用，script只能全局引入，所有js都能调用不需要引用
+
+### webpack怎么让同时用CommonJs和ESM规范编写的代码，打包后在浏览器不使用ES Module来实现模块化？
+
+通过编译CMD和ESM的源代码做资源收集合并，再利用js插入script的形式来做整合过的模块化
+
+浏览器环境是不支持Commonjs
+
+ES6(浏览器支持的语法)支持ES Module后浏览器支持js文件可以使用import引入依赖文件
+
+开发编写的是Commonjs和ESM，最后上线的代码既不是CMD也不是ESM，而是打包后的插入script方法(webpack干的)
+
+前端利用打包工具(模块化工具)，收集依赖，生成指针，在引用方引用。或是把依赖的资源内容合并到引用方文件中。
+
+---
+
+> 在没有ES6之前，AMD异步模块也同样脱胎于Commonjs规范，浏览器支持的Commonjs的方法是使用require.js的库，注意这个库和node的require不是一个东西，这个库就是AMD实现的
+
+## CommonJs
+
+Commonjs是一种模块化规范(思想)
+
+> Commonjs.................  ——维基百科
+
+而node就是借鉴这种思想实现自己的模块化的，所以也不能完全说nodejs就是Commonjs
+
+webpack作为以js为底层语言的打包工具，并不直接支持Commonjs，是利用node的Commonjs做依赖收集后进行整合后用方法插入script来协助打包的。所以webpack工程下，编写Commonjs不需要额外操作支持，编译可以识别。但是用ES Model 就要mjs或者高版本nodejs配置package.json的type:module 。
+
+在低版本node或是没有更新的项目里，webpack是通过babel把ESM转为Commonjs，再做处理的。
+
+> 也不一定是把ESM转为Commonjs，这要看babel是怎么转的
+
+### 从0实现简易Commonjs
+
+这里先转变以前的固有印象，“引入”和“抛出”
+
+在Comminjs
+
+引入的本质是存储/缓存
+
+抛出的本质是读取缓存
+
+实现模块化的本质就是，把每个文件存储到Module的大对象中，每个文件就是一个子对象module，并每个文件内有各种信息
+
+```js
+
+const Module = {
+
+  [module] = {
+
+  id: '',
+
+  exports: {},
+
+    loaded: false,
+
+    module: {},
+
+    ...
+
+    ...
+
+},
+
+  ...
+
+}
+
+```
+
+抛出的内容就是往`exports`中存储深拷贝的值，引入就是获取整个`exports`（一般解构赋值出来）
+
+由此可以看出引入也就是获取缓存的值取决于当时存储时的值，也就不是动态可变的了
+
+#### 让js文件直接支持myexport、myrequire等
+
+支持Commonjs的环境(node)，会在编译运行js时包装js
+
+即我们写的js不是最终执行的js，而是会被包裹起来，进行统一处理
+
+如 node index.js
+
+执行index.js，node就会先对index.js进行包装
+
+注入进去export models等变量或函数
+
+这就是在js里全局支持使用export的原因
+
+不使用node模块化相关的api，但是还是需要用到node其他的api如读取文件内容
+
+我们需要读取require引入的资源文件内容，进行包装注入模块化api或其他工具
+
+```js
+
+function (){
+
+  wrap(fileContent)(myrequire); // 柯里化函数方式，第一次调用传递引入的资源文件内容，返回一个函数，传递要注入的东西并运行
+
+}
+
+```
+
+```js
+
+function wrap(fileContent) {
+
+  // 拼接函数进行包装 注意要包一层()才不会被eval立即执行,而是返回一个字符串()内的函数
+
+  const newfileContent = `(function (myrequire){
+
+    ${fileContent}
+
+  })`
+
+  return
+
+}
+
+```
+
+↑ 资源文件内容是一个js文件的所有字符串，里面可以直接使用模块化api
+
+先包装字符串，然后执行，注意执行字符串的结果要返回一个函数而不是直接执行(会报错myrequire undefined)
+
+这样就能运行引入的资源文件了，但是还没实现模块化抛出和接收的动作
+
+另外打印内容会发现执行顺序
+
+```js
+
+开始引入index.js
+
+执行index.js
+
+开始引入a.js
+
+开始引入b.js
+
+没有找到a.js
+
+执行b.js
+
+```
+
+可以看到，index.js引入a和b，执行index并没有等a和b引入结束
+
+而运行一次原生Commonjs如下
+
+```js
+
+开始引入index.js
+
+开始引入a.js
+
+error 没有找到a.js
+
+```
+
+原生是会等a和b引入结束才执行index的，并且遇到引入异常会中断运行
+
+我们自己写的Commonjs不是同步的原因是
+
+```js
+
+// 读取文件内容是异步的，外面调用myrequire是不会等内部异步结束，所以读取文件内容要用同步
+
+fs.readFile(filePath)
+
+fs.readFileSync(filePath)
+
+```
+
+并且处理读取文件内容失败，要中断node抛出运行，throw
+
+#### myrequire识别资源方式
+
+识别资源路径
+
+```js
+
+const enterPublicPath = 'example'
+
+/**
+
+ * 文件路径几种格式
+
+ * xxx node内置模块
+
+ * /xxx 当前目录绝对路径
+
+ * ./ ../ 当前目录相对路径
+
+ * xxx node_modules下的目录
+
+ */
+
+function dealFilePath(filePath) {
+
+  const firstString = filePath.charAt();
+
+  if (firstString === '.') {
+
+    // 当前目录相对路径转为绝对路径(模拟的都是冲从example中引入的，跟当前core文件夹是同级所以相对路径也是)
+
+    // console.log('当前文件core的绝对路径',__dirname);
+
+    return path.resolve(__dirname, `../${enterPublicPath}/${filePath}`);
+
+  } else if (firstString === '/') {
+
+    // 当前目录绝对路径
+
+  } else if (node内置模块.includes(filePath)) {
+
+    // node内置模块
+
+  } else {
+
+    // node_module模块
+
+  }
+
+}
+
+```
+
+这里模拟expample文件夹下的相对路径资源，所以加个参数`enterPublicPath`用于解析文件资源路径
+
+#### require处理资源防止套娃引用
+
+reuqire顺序是深度优先遍历
+
+> 这里的深度优先并不是模块化工具在做递归，而是资源引用的写法：每次在不同文件下`require`，因为是同步执行自然而然形成的嵌套调用
+
+index引用a、b，a文件引用b，b文件引用a，node原生Commonjs执行顺序
+
+```js
+
+开始引入index.js
+
+开始引入a.js 
+
+开始引入b.js (b有引a,但是不会触发开始引入和执行a)
+
+执行b.js
+
+执行a.js
+
+执行index.js
+
+```
+
+可以看出不会重复引用
+
+实现原理：和递归遍历类似，可以用一个weakmap存储调用过的资源文件
+
+#### 关于require动态引用
+
+> 又回到这个概念，动态不等于异步
+
+Commonjs是同步引入资源的-->TODO: 展开讲讲
+
+动态引入是在函数里require，只有在调用该函数才会引入资源，运行时才去获取对应的内容
+
+>  在webpack里require的资源是个未知的变量（运行时才可知）的话，上线之后会加载不到该文件。为什么node可以，webpack不行？
+
+> 是因为在本地node环境下，动态require运行时可以找到文件，如果动态require的文件是本地不存在的话，也是会报错找不到的
+
+> 而webpack打包不会运行未知的代码(会收集已知的require资源)，所以不会知道动态require的文件是什么，就不会把目标文件打包进项目，最后运行时服务器中找不到该文件就会报错
+
+还是要留意动态加载和异步加载不是同一概念。
+
+require无法做到异步加载，不如index依赖a
+
+希望点击才加载a文件，在Commonjs里，index依赖a即使在条件作用域里，也必须初始化的时候就加载进来，点击时执行a
+
+而做不到点击时才去找a文件进行加载和执行
+
+#### exports怎么抛出内容，只抛出某个变量，整个文件的其他内容会怎样
+
+exports是处理后的文件资源信息对象，也是通过这个文件信息对象抛出信息的
+
+抛出和接收是使用模块化编程时的直观感受，实际上“抛出”的动作是文件把值存到export里，而“接收”就是require去export对象中取值(require还有抓取、包装文件内容的作用)
+
+这也就是为什么抛出数据只能exports.xx 一个个抛出而不能直接exports = {xx}
+
+原因是exports是文件资源信息对象里的一个属性，如果在文件中自己重新赋值了exports，将是一个全新的变量，而不再是文件对象里的属性，那么require就取不到文件抛出的信息
+
+通过函数传递进来的export是引用类型module.export，
+
+引用类型直接重新赋值为什么会是全新的变量？
+
+是js原生这么干的，不关node的事。函数的引用类型形参做重新赋值会是个新的变量
+
+```js
+
+const module = {
+
+  myexports: {}
+
+}
+
+// 传入的是module.myexports引用类型，如果重新赋值了myexports将不再有引用作用而是一个新的对象
+
+function a(myexports) {
+
+  myexports = {a:'1'} // -->{ myexports: {} }
+
+  // myexports.b = 'b' // -->{ myexports: {b: 'b'} }
+
+}
+
+a(module.myexports)
+
+console.log(module)
+
+```
+
+ES Module为什么原生支持tree shaking
+
+因为是静态导入，什么是静态导入，会自动提升到代码顶层就是？ 
+
+因为是静态语法，所以是编译时？编译时就比运行时要早所以更好更快？
+
+编译时：如import 命令是编译阶段执行的，在代码运行之前。编译过程不能使用表达式和变量，这些是只有在运行时才能得到的动态结果
+
+JS 引擎对脚本静态分析的时候，遇到命令 import ，就会生成一个只读引用。等到脚本真正执行时，再根据这个只读引用，到被加载的文件里面去取值（由于 ES6 import的文件变量，只是一个“符号连接”，所以这个变量是只读的，相当于“抛出”的变量都是const，对它进行重新赋值会报错。）
+
+因此ES6 模块“抛出”的变量是活的，ES6 模块是动态取值，并不会缓存值，模块里面的变量绑定其所在的文件
+
+## ES Module
+
+### node环境
+
+node13前不支持ESM，支持Commonjs
+
+.mjs文件中支持ES6所以，mjs可以用ESM，并且还是支持原来Commonjs
+
+node 8.5开始支持mjs，但是ESM是实验性的所以需要参数
+
+会提示ESM是实验性
+
+```bash
+
+node --experimental-modules index.mjs
+
+(node:9076) ExperimentalWarning: The ESM module loader is experimental.
+
+低版本node 支持ESM
+
+```
+
+而且import方要mjs，export方也要mjs
+
+### 浏览器环境
+
+> 和node环境用mjs后缀的方式不同，在浏览器环境不认识mjs，mjs是node自己新增的
+
+要不影响以往的没有模块化的js，所以需要支持模块化时在标签上加上type
+
+`
+
+```
+
+`type="module"`，就等同于开启异步加载资源（所以也是适合外部资源？但是打包的工程大部分都是内部资源啊？），并且和defer基本相同，等页面完成渲染结束，按顺序执行资源
+
+可以同时开启async
+
+```html
+
+```
+
+就会下载完就中断渲染，先执行，再恢复渲染
+
+ES Module除了加载规则跟异步加载资源相同外，内部是支持直接使用import的。而这时只开启异步加载的资源文件无法做到的
+
+利用顶层的 this 等于 undefined 这个语法点，可以侦测当前代码是否在 ES6 模块之中。
+
+```js
+
+const isNotModuleScript = this !== undefined;
+
+```
+
+ES6 模块的设计思想，是尽量的静态化，使得编译时就能确定模块的依赖关系，以及抛出和接收的变量
+
+CommonJS 和 AMD 模块，都只能在运行时确定模块的依赖关系，以及抛出和接收的变量
+
+如Commonjs
+
+`const {a,b} = require("fs")`
+
+rqeuire是个函数，是运行函数才能读取资源的，并且没有传递参数就只能整个文件读取下来，再解构赋值给a和b
+
+而`import {a,b} from 'fs'`
+
+不是函数，是js语法支持的读取，且命令实现只读取fs文件中抛出的a和b，并且这里的`{ }`并不是解构赋值，而是命令解析的字符串。
+
+ES6 可以在编译时就完成模块加载，这也导致了没法引用 ES6 模块本身，因为它不是对象
+
+另外， export 语句输出的接口，与其对应的值是动态绑定关系，即通过该接口，可以取到模块内部实时的值。
+
+```js
+
+export var foo = 'bar';
+
+setTimeout(() => foo = 'baz', 500);
+
+```
+
+上面代码输出变量 foo ，值为 bar ，500 毫秒之后变成 baz 。
+
+这一点与 CommonJS 规范完全不同。CommonJS 模块输出的是值的缓存，不存在动态更新(如果是引用类型也不行，因为存储到exports的是深拷贝？)
+
+```js
+
+// lib.js
+
+var counter = 3;
+
+function incCounter() {
+
+counter++;
+
+}
+
+module.exports = {
+
+get counter() {
+
+return counter
+
+},
+
+incCounter: incCounter,
+
+};
+
+```
+
+这样就可以拿到深拷贝的值，因为并不是拿拷贝的值，而是通过函数作用域去取值，作用域内的值变了，取到值就变了。
+
+ES6的export 命令可以出现在模块的任何位置，但是处于块级作用域内，就会报错，下一节的 import 命令也是如此。这是因为处于条件代码块之中，就没法做静态优化了，违背了 ES6 模块的设计初衷
+
+通过 Babel 转码，CommonJS 模块的 require 命令和 ES6 模块的 import 命令，可以写在同一个文件里面，但是最好不要这样做。因为import 在静态解析阶段执行，所以它是一个模块之中最早执行的
+
+```js
+
+require('core-js/modules/es6.symbol');
+
+require('core-js/modules/es6.promise');
+
+import React from 'React';
+
+```
+
+`core-js/modules`是给react实例化用的插件，但是这样写会先实例化react
+
+```js
+
+// 报错
+
+if (x === 2) {
+
+import MyModual from './myModual';
+
+}
+
+```
+
+编译过程处理 import 语句，这时不会去分析或执行 if 语句，所以 import 语句放在 if 代码块之中毫无意义，报句法错误，而不是执行时错误
+
+import() 函数可以用在任何地方。它是运行时执行，什么时候运行到这一句，也会加载指定的模块。另外，**import() 函数与所加载的模块没有静态连接关系？？？？什么是静态连接关系**，这点也是与 import 语句不相同。
+
+import() 类似于 Node 的 require 方法，区别主要是前者是异步加载，后者是同步加载（就是require一定会加载结束才往下走，而import()不await住的话会异步执行）
+
+所以nodejs环境 Commonjs可以被await import()完全替代了？
+
+ES6 模块与 CommonJS 模块完全不同。
+
+它们有两个重大差异
+
+- CommonJS 模块输出的是一个值的拷贝(深拷贝)
+
+- ES6 模块输出的是值的引用（变量的绑定？）
+
+- 
+
+- CommonJS 模块是运行时加载
+
+- ES6 模块是编译时输出接口
+
+浏览器使用原生的ES Module的话，依靠浏览引入资源a，a依赖很多js，一个依赖资源一个请求吗？会发起很多资源请求？
+
+打包工具不会运行文件来得到依赖关系，而是扫描require来收集依赖关系，并转为插入script的方法
+
+## webpack是怎么让Commonjs支持tree shaking？
