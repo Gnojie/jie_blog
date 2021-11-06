@@ -23,7 +23,7 @@ module.exports = {
           children: [
             { text: 'router实现原理', link: '/vue/vue-router实现原理' },
             { text: 'create-vue脚手架', link: '/vue/create-vue脚手架' },
-            { text: 'esbild使用', link: '/vue/esbild使用' },
+            { text: 'esbuild使用', link: '/vue/esbuild使用' },
           ],
         },
         {
