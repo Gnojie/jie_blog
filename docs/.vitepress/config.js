@@ -33,6 +33,17 @@ module.exports = {
           ],
         },
         {
+          text: '视频学习',
+          children: [
+            {
+              text: '拉勾-前端基础架构与构建30讲',
+              children: [
+                { text: '前言', link: '/videoLearn/lagou-build/前言' },
+              ],
+            },
+          ],
+        },
+        {
           text: '每周学习整理',
           children: [
             { text: '202110-1', link: '/week/202110-1' },
