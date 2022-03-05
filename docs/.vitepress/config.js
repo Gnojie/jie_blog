@@ -1,8 +1,8 @@
 const initPage = require('./initPage')
 module.exports = {
   base: "/giteepage_blog/",
-  title: "Hello VitePress",
-  description: "Just playing around.",
+  title: "罗锦安的blog",
+  description: "vue、js、nodejs等等的学习记录",
 
   // 主题配置
   themeConfig: {
@@ -15,9 +15,9 @@ module.exports = {
     sidebar: {
       '/': [
         {
-          text: ' 面试题',
+          text: ' 介绍',
           children: [
-            { text: 'vue面试题', link: '/'},
+            { text: '介绍', link: '/'},
           ],
         },
         ...initPage()
