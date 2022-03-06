@@ -1,11 +1,11 @@
 
 Vue是渐进式框架
 
-最基础的功能往外按需使用生态
+从最基础的功能往外按需使用生态
 
 最基础的是模版引擎，数据驱动视图，往外开始需要到组件复用视图和数据关系，再往外需要路由解决打多页面问题，再往外是各种生态
 
-从最基础的数据驱动视图看Vue的本质
+我们从最基础的数据驱动视图看Vue的本质
 
 ```html
 <html>
@@ -19,7 +19,7 @@ Vue是渐进式框架
       template: '<h1>{{title}}</h1>',
       data: {
         title: '标题'
-      }
+      }··
     };
 
     new Vue(config);
@@ -27,14 +27,71 @@ Vue是渐进式框架
 </body>
 </html>
 ```
+效果如👇
 ![](https://gitee.com/luojinan1/markdown-img/raw/master/20220303233115.png)
 
-> 题外话: CDN的vue资源读取第二次是取缓存，这个缓存是谁做的?怎么做到的?如果我现在断网还能不能获取到?如果vue的版本更新了这个CDN地址怎么办?用户手动清除缓存吗?请求头里的强缓存时间是7天,7天之后Vue没有版本更新也要重新获取资源吗?
+## vue对外的资源js为什么这么多版本
+> 👆 选择使用CDN的形式引入vue资源
 
-从上面的js的效果可以看出，vue做的事情就是把`data`和`template`的配置项结合覆盖到目标`el`中
+![](https://gitee.com/luojinan1/markdown-img/raw/master/20220305234509.png)
+
+**CDN上vue对外的包为什么分这么多种？**
+- 开发版、生产版(压缩版/mini版)
+- 完整版、运行时版(runtime)
+- CJS版、ESM版、UMD版
+
+### 开发版、生产版(压缩版/mini版)
+> `CommonJS` 和 `ES Module` 版本是用于打包工具的，因此我们不提供压缩后的版本。你需要自行将最终的包进行压缩。
+
+TODO: 但是压缩代码不是会设置忽略`node_modules`的吗?所以我们现在生产上的代码是引入时就压缩了，还是打包时压缩的？
+
+### 完整版、运行时版(runtime)
+- 编译器：用来将模板字符串编译成为 JavaScript 渲染函数的代码。
+- 运行时：用来创建 Vue 实例、渲染并处理虚拟 DOM 等的代码。基本上就是除去编译器的其它一切。
+- 完整版：编译器+运行时
+
+当使用 `vue-loader` 或 `vueify` 的时候，`*.vue` 文件内部的模板会在构建时预编译成 `JavaScript`(render函数)
+
+最终打好的包里实际上是不需要编译器的，所以只用运行时版本即可
+
+因为运行时版本相比完整版体积要小大约 30%，所以应该尽可能使用这个版本,打包工具引入的资源默认是运行时版本的
+
+```js
+import Vue from 'vue' // 配置打包工具的资源别名指向具体的资源版本
+import App from './App'
+// 需要编译器
+new Vue({
+  el: '#app',
+  components: { App },
+  template: '<App/>'
+})
+
+// 不需要编译器
+new Vue({
+  el: '#app',
+  render: h => h(App)
+})
+```
+👆 看出编译器用于把`template`配置相中的字符串在运行时编译成`渲染函数/vNode`,如果不写`template`，而是写`reander`就不需要编译
+
+真实场景不会直接用`template`，但是也不会直接用`render`，而是写`.vue`文件，依赖`vue-loader`在编译阶段把模版`<template>`编译成`render`
+
+> TODO: 理论上`vue-loader`只在编译阶段用，分包把依赖单独打包时，却发现打包产物中有`vue-loader`??
+
+### TODO: 为什么ESM要分为浏览器版和nodejs版
+
+ES Module：从 2.6 开始 Vue 会提供两个 `ES Modules (ESM)` 构建文件：
+- 为打包工具提供的 `ESM`：为诸如 `webpack 2` 或 `Rollup` 提供的现代打包工具。ESM 格式被设计为可以被静态分析，所以打包工具可以利用这一点来进行“tree-shaking”并将用不到的代码排除出最终的包。为这些打包工具提供的默认文件 (pkg.module) 是只有运行时的 `ES Module` 构建 (`vue.runtime.esm.js`)。
+- 为浏览器提供的 `ESM` (2.6+)：用于在现代浏览器中通过 `<script type="module">` 直接导入。
+
+---
+> 题外话: CDN的vue资源读取第二次是取缓存，这个缓存是谁做的?怎么做到的?如果我现在断网还能不能获取到?如果vue的版本更新了这个CDN地址怎么办?用户手动清除缓存吗?请求头里的强缓存时间是7天,7天之后Vue没有版本更新也要重新获取资源吗?
+---
+## Vue的模版引擎功能
+
+从上面运行结果可以看出，vue做的事情就是把`data`和`template`的配置项结合覆盖到目标`el`中
 
 我们可以尝试写出这种效果来
-## Vue的模版引擎功能
 
 ### 为什么要包成闭包
 我们来写多几个js，如果不包在闭包里面，各自js中的变量就会互相冲突
@@ -51,12 +108,15 @@ let a = '1'
 
 
 ### 模块化的形式
-> 可以看到写成闭包，并且挂载实例到window全局变量中，这就是UMD的模块化形式
+> 写成闭包之后要做到是挂载实例到window全局变量中
+> 怎么挂到到全局变量，又有几种方式，我们看看vue2的方式是UMD的
+> 先看看UMD的模块化形式概念
 
 单纯立即执行函数中挂载全局变量
 ```js
 (()=>{
   window.Vue = Class
+  // var Vue = Class // 是不是全局变量？
 })()
 ```
 兼容不同环境的全局变量，把全局变量写为this，传递进来挂载
@@ -85,11 +145,34 @@ let a = '1'
 })(this,Class)
 ```
 
-UMD: 举例
+UMD: Vue2、JQuery...
 
-挖坑
+> 再来看看vue3的CDN
+
+vue3的CDN资源
+![](https://gitee.com/luojinan1/markdown-img/raw/master/20220305233901.png)
+
+```js
+var Vue = (()=>{ return class })
+```
+👆 用闭包限制内部变量的同时又挂在全局变量上
+
+IIFEs vs UMD ？
+- UMD 兼容其他形式的模块化，`require('cdn/xx')`等
+- IIEFs不能这么引用
+- IIEFs只能用于html加载，连nodejs环境引入也没用
+
+> 思考🤔: Vue3为什么不考虑支持UMD
+- UMD主要用于让资源同时支持nodejs和浏览器环境，现在更推荐用ESM即可(需要本地启WEB服务)
+
 
 ## 参数为什么不用this
+```js
+((this)=>{ // 这个参数为什么不能写this？
+  this.Vue = class
+})(this)
+```
+js规定形参不能用内部语法/变量命名
 
 ## class的语法
 有人会在业务代码里面写class吗
@@ -104,9 +187,9 @@ new写起来帅一点
 浏览器不支持class的时候，babel的作用
 
 
-## 模版字符串解析`{{}}`
+## 模版字符串解析 { { } }
 
-> 先尝试思考一下算法思路
+> 先尝试思考🤔一下算法思路
 ```js
 function test(text) {
   console.log(text)
@@ -138,19 +221,61 @@ function getValue(val){
 }
 ```
 
+---
+> 题外话，搜索`算法 括号` 找到[leetcode](https://leetcode-cn.com/problems/valid-parentheses/)上的匹配有效括号算法题看看
 
-## vue3为什么要舍弃OptionsApi 改为CompositionApi
-
-## 最基础的功能是数据驱动视图，那和以往用模版语法写页面有什么区别呢？都是用js来写页面
+[有效括号校验](/interview/算法01.html#有效括号校验)
 
 ---
 
+## 最终实现代码
+```js
+((globalEnv,something)=>{ // 参数命名为this行不行
+  globalEnv.Vue = something
+})(this, class Vue{
+    constructor({el,data,template}) {
+      console.log('创建一个Vue')
+      this.el = el
+      this.data = data
+      this.template = template
 
-template参数和render二选一
+      this.dealDataTemp() // 结合data,template 生成dom覆盖到目标el
+    }
+
+    dealDataTemp() {
+      // '<h1>{{title}}</h1>' ==> '<h1>xx</h1>'
+      const newHtml = this.template.replace(/\{\{(.+?)\}\}/g,(...args)=>{
+        return this.getValue(args[1])
+      })
+      this.render(newHtml)
+    }
+
+    getValue(val){
+      return val.split('.').reduce((pre,next)=>{
+        return pre[next]
+      },this.data)
+    }
+    render(html) {
+      const rootDom = document.querySelector(this.el);
+      rootDom.innerHTML = html
+    }
+  }
+)
+```
+或者
+```js
+var Vue = (()=>{
+  return class
+})()
+```
 
 
+## 当我们说创建vue实例用template参数和render时我们在说什么
+> template参数和render二选一,都能达到挂载渲染页面的效果
+> 
+> 两者最大的区别是，引入的vue资源要完整版还是runtime版
 
-el参数和$mount()二选一
+## el参数和$mount()二选一
 ```js
 // 1. new Vue实例时传递目标el，直接开始渲染
 new Vue({template,el:'#app'})
@@ -161,19 +286,11 @@ const app = new Vue({template})
 app.$mount('#app')
 ```
 
-## Vue的数据驱动视图作用
+## vue3为什么要舍弃OptionsApi 改为CompositionApi
 
-react、小程序
-```js
-const data = {a:'1'}
-setData({a:'2'})
 
-setData(newData) {
-  Object.assign(data,newData)
-  render()
-}
-
-render() {
-  dealHtml() // 结合template和data 得到新的html来innerHtml渲染
-}
-```
+TODO：
+- [ ] 变量提升
+- [ ] 变量作用域
+- [ ] class与构造函数
+- [ ] new

@@ -1,7 +1,7 @@
 const glob = require("glob");
 
 // 获取文件夹下所有md文件的文件名,返回数组
-function getFileName() {
+export function getFileName() {
   const files = glob.sync('./docs/*/**/*.md')
   let tocConfigs = [];
   files.forEach((file) => {
@@ -28,4 +28,5 @@ function getFileName() {
   return tocConfigs;
 }
 
-module.exports = getFileName
+// module.exports = getFileName
+export default getFileName

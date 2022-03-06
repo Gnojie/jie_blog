@@ -1,4 +1,4 @@
-const initPage = require('./initPage')
+import initPage from './initPage'
 module.exports = {
   base: "/giteepage_blog/",
   title: "罗锦安的blog",
