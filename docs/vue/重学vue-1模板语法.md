@@ -100,6 +100,11 @@ ES Module：从 2.6 开始 Vue 会提供两个 `ES Modules (ESM)` 构建文件�
 FIXME: 因为js运行是有作用域的，块级作用域、行内作用域(是不是有点像css的会分行的块状元素和不会分行的行内元素)
 闭包里利用的是外部无法访问函数内部的机制，也就是手动限制了作用域
 
+闭包的缺点：
+- 内存溢出
+
+> 题外话：明明浏览器V8引擎有垃圾回收机制，为什么还会溢出，垃圾回收有没有作用TODO:
+
 TODO: 说到变量污染了，再来看看变量提升
 ```js
 console.log(a) // 不是有变量提升吗？为什么会报a未定义
@@ -211,8 +216,8 @@ test('<div>{{msg}}</div><p>{{}}</p>')
 用正则
 
 ```js
-let value=str.replace(/\{\{(.+?)\}\}/g,(...args)=>{
-  eturn getValue(args[1])
+let value=str.replace(/\{\{(.+?)\}\}/g,(match, item)=>{
+  eturn getValue(item)
 })
 function getValue(val){
   return val.split('.').reduce((data,currentVal)=>{
@@ -244,8 +249,8 @@ function getValue(val){
 
     dealDataTemp() {
       // '<h1>{{title}}</h1>' ==> '<h1>xx</h1>'
-      const newHtml = this.template.replace(/\{\{(.+?)\}\}/g,(...args)=>{
-        return this.getValue(args[1])
+      const newHtml = this.template.replace(/\{\{(.+?)\}\}/g,(match,item)=>{
+        return this.getValue(item)
       })
       this.render(newHtml)
     }
@@ -285,6 +290,18 @@ new Vue({template,el:'#app'})
 const app = new Vue({template})
 app.$mount('#app')
 ```
+vue-cli脚手架做法
+```js
+import Vue from 'vue'
+import App from './App.vue'
+
+new Vue({
+  render:h=>h(App)
+}).$mount('#app')
+```
+👆 为什么脚手架要用$mount而不是配置参数el呢？
+
+
 
 ## vue3为什么要舍弃OptionsApi 改为CompositionApi
 
