@@ -72,6 +72,27 @@ Object.defineProperty(data,x{
 ## 解决`Object.defineProperty`的缺点
 
 - `$set(data, prop, newVal)`
+```js
+const obj = {a:'1'}
+
+function $set(obj,key,val){
+  Object.defineProperty(obj,key,{
+    set() {
+    }
+    get() {
+    }
+  })
+}
+
+obj.b = 2
+$set(obj,'b',2)
+```
 - 重写数组方法
 
+```js
+
+```
+
 ## Vue3的proxy
+
+关于[Proxy](../js/proxy.md)

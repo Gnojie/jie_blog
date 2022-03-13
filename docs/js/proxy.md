@@ -1,4 +1,3 @@
-# proxy
 ## proxy简介
 > 只做简到不能再简的简介，详细用法请查阅[MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy)和[阮一峰ES6](https://es6.ruanyifeng.com/#docs/proxy)
 > 
