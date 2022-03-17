@@ -62,7 +62,7 @@ const config = {
 const app = new Vue(config)
 ```
 
-👆 可哟看到一个`VNode`里面是带着真实DOM的，所以虚拟DOM并没有办法脱离真实DOM的范畴
+👆 可以看到一个`VNode`里面是带着真实DOM的，所以虚拟DOM并没有办法脱离真实DOM的范畴，并且在浏览器内存中存着一份真实DOM
 甚至绕过虚拟DOM,直接操作DOM性能会更好
 
 思考🤔: 虚拟DOM到底有什么好处
