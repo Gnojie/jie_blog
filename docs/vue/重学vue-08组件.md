@@ -60,7 +60,45 @@ function newComponent(option) {
 
 注册组件其实并不产生新的组件类，但会产生一个可以用来实例化的新方式
 
+这就有点像我们平时开发业务代码初始化数据一样，点击生成列表数据中的一项，生成的一项数据我们抽离成公用的
+```js
+const list = []
+const obj = {
+  a:'1', b:'2'
+}
 
+function initOneData() {
+  return obj
+}
+
+function onClick() {
+  const res = initOneData()
+  list.push(res)
+}
+onClick()
+console.log(list) // [{a:'1',b:'2'}]
+list[0].a = 'a' // [{a:'a',b:'2'}]
+onClick()
+console.log(list) // [{a:'a',b:'2'},{a:'a',b:'2'}]
+```
+👇 解决办法
+```js
+const obj = {
+  a:'1', b:'2'
+}
+
+function initOneData() {
+  return JSON.parse(JSON.stringfy(obj))
+}
+
+function initOneData() {
+  return {
+    a:'1', b:'2'
+  }
+}
+```
+
+🤔 深拷贝的其他方式
 
 ## props
 > 类似函数复用，需要参数
@@ -68,7 +106,7 @@ function newComponent(option) {
 
 ## $emit
 > 原理
- 
+
 ## sync
 自定义组件用 .sync 替代 v-model
 show的那种？
@@ -78,3 +116,4 @@ show的那种？
 ## 插槽
 作用域插槽
 
+## 注册组件的不同形式
