@@ -182,7 +182,7 @@ IIFEs vs UMD ？
 ```
 js规定形参不能用内部语法/变量命名
 
-## class的语法
+## Vue构造函数
 有人会在业务代码里面写class吗
 class简介
 构造函数简介
@@ -190,7 +190,8 @@ class简介
 两者没有区别
 
 new写起来帅一点
-那么new做了什么
+那么`new Vue()`做了什么，[new的原理](../interview/手写系列-new原理.md)
+既然Vue是一个构造函数，如果直接`Vue()`会怎样
 
 浏览器不支持class的时候，babel的作用
 

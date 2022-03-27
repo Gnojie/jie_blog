@@ -123,11 +123,52 @@ function bind(fn, target, ...arg) {
   }
 }
 ```
+
+**new的问题**
+> 由于bind返回的是函数，而这个函数被怎么调用就不是我们可以控制的了
+> 而且bind是修改this指向，如果返回的函数被调用的时候又是另一种this指向的诉求就gg
+> 而恰恰new一个函数就是这种情况
+
+简单来说new的this指向优先级最高
+```js
+function test() {
+  console.log(this.name)
+}
+
+const obj1 = { name: 'obj1' }
+const newTest = bind(test)
+new newTest() // 不是直接执行newTest 而是new
+```
+👆 此时的test虽然被修改了`this`指向，但是在`new`面前，this会是new出来的对象
+
+关于new的原理，[手写系列-new原理](./手写系列-new原理.md)
+
+👇 我们处理一下优先级的问题
+通过执行时的`this`是不是函数自身来判断是new执行还是直接执行做不同的处理
+```js
+function bind(fn, target, ...arg) {
+  return function F(...arg2) {
+    // 通过执行时this是不是函数自身来判断是new
+    if(this instanceof F) {
+      return new fn(...arg,...arg2)
+    }
+    target.fn = fn // 把函数挂到目标对象的临时变量上
+    const res = target.fn(...arg,...arg2) // 通过目标对象执行函数即可让this指向目标对象
+    delete target.fn  // 清除为了修改this指向而挂上对象的函数
+    return res // 需要返回运行结果
+  }
+}
+```
+
 👇 我们复用一下call
 
 ```js
 function bind(fn, target, ...arg) {
   return function(...arg2) {
+    // 通过执行时this是不是函数自身来判断是new
+    if(this instanceof F) {
+      return new fn(...arg,...arg2)
+    }
     return call(fn, target, ...arg, ...arg2)
   }
 }
@@ -138,6 +179,10 @@ function bind(fn, target, ...arg) {
 Function.prototype.myBind = function(target, ...arg) {
   const fn = this // 如下调用 this就是test函数
   return function(...arg2) {
+    // 通过执行时this是不是函数自身来判断是new
+    if(this instanceof F) {
+      return new fn(...arg,...arg2)
+    }
     target.fn = fn // 把函数挂到目标对象的临时变量上
     const res = target.fn(...arg,...arg2) // 通过目标对象执行函数即可让this指向目标对象
     delete target.fn  // 清除为了修改this指向而挂上对象的函数
@@ -145,7 +190,8 @@ Function.prototype.myBind = function(target, ...arg) {
   }
 }
 
-test.myBind()
+const newtest = test.myBind(obj1)
+newtest()
 ```
 
 ## 拓展优化
