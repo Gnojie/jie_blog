@@ -36,7 +36,7 @@ function myNew(fn, ...arg) {
   obj.__proto__ = fn.prototype // 2. 设置空对象的原型
 
   let res = fn.call(obj, ...arg) // 3. 绑定this并执行构造函数
-  return result instanceof Object ? result : obj // 4. 构造函数不返回对象则返回创建的新对象
+  return res instanceof Object ? res : obj // 4. 构造函数不返回对象则返回创建的新对象
 }
 
 function test(name) {
@@ -74,6 +74,9 @@ function Object() {
 思考🤔: [new Vue()干了什么](../vue/重学vue-01模板语法.md#Vue构造函数)
 
 ---
+## 代码地址
+[codepen](https://codepen.io/collection/kNgywB)
 
 ## 参考资料
+- [new - mdn](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new)
 - [面试官问：能否模拟实现JS的new操作符](https://juejin.cn/post/6844903704663949325)
