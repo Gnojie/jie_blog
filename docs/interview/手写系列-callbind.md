@@ -4,8 +4,11 @@
 
 ## call、apply、bind用法
 > 建议先看
+> 
 > [call - mdn文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/call)
+> 
 > [apply - mdn文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/apply)
+> 
 > [bind - mdn文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)
 
 ```js
@@ -80,7 +83,9 @@ test.myCall()
 
 ## 实现apply
 > `apply` 和 `call` 基本一样，只是让参数通过数组传入
+> 
 > 可能是想方便封装工具的时候，参数未知，用`call`就不太方便，可以直接传入 `arguments`
+> 
 > 但是参数未知的时候，我们传入解构 `arguments` 传入不就行了吗...个人觉得是相同功能的东西设计2个API是多余的
 
 ```js
@@ -196,7 +201,9 @@ newtest()
 
 ## 拓展优化
 我们把函数用一个临时变量挂在目标对象上，调用后就删除
+
 这个临时变量我们可以利用 `Symbol` 数据类型实现
+
 好处是这个临时变量做的属性名是**唯一**的，不会被业务代码覆盖
 
 如👇 `call`改造
