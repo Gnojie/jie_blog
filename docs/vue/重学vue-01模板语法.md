@@ -29,12 +29,12 @@ Vue是渐进式框架
 </html>
 ```
 效果如👇
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220303233115.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220303233115.png)
 
 ## vue对外的资源js为什么这么多版本
 > 👆 选择使用CDN的形式引入vue资源
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220305234509.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220305234509.png)
 
 **CDN上vue对外的包为什么分这么多种？**
 - 开发版、生产版(压缩版/mini版)
@@ -58,7 +58,7 @@ TODO: 但是压缩代码不是会设置忽略`node_modules`的吗?所以我们�
 因为运行时版本相比完整版体积要小大约 30%，所以应该尽可能使用这个版本,打包工具引入的资源默认是运行时版本的
 
 CDN的默认是完整版，我们试着改成runtime版 👇
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220313215927.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220313215927.png)
 
 
 ```js
@@ -158,7 +158,7 @@ UMD: Vue2、JQuery...
 > 再来看看vue3的CDN
 
 vue3的CDN资源
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220305233901.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220305233901.png)
 
 ```js
 var Vue = (()=>{ return class })

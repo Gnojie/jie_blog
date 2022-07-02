@@ -200,12 +200,12 @@ function getAst(path) {
 
 module.exports = getAst
 ```
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220320204335.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220320204335.png)
 👇 打印一个AST节点Node的内容子节点，我们有办法通过节点type识别出`import`，却没办法识别 `require`
 - ImportDeclaration: 引入声明
 - ExpressionStatement: 表达式语句
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220320210448.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220320210448.png)
 
 我们希望识别出AST中的引入代码，把被引入资源路径收集到一个集合中
 等待我们后续的处理
@@ -402,11 +402,11 @@ class Compiler {
   }
   // 构建启动
   run() {
-    const res = this.parse(this.entry)
+    const res = this.parse(this.entry) // 入口依赖分析
     this.modules.push(res)
-    this.deepRequire()
+    this.deepRequire() // 入口依赖递归分析
     
-    const moduleListString = this.wrap()
+    const moduleListString = this.wrap() // 包装所有依赖模块
     const fileRes = generate(moduleListString,this.entry)// 合并写入一个输出文件中
     outputFile(fileRes)
   }
@@ -422,7 +422,7 @@ module.exports = function (options) {
 我们直接运行生成出来的js文件，发现报错找不到资源
 这是因为我们modules的key值是转化后的绝对路径，而业务代码写的是相对路径
 因此用相对路径作为key去匹配模块，将找不到资源
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220320234256.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220320234256.png)
 你可能会说，那我们就用业务代码的相对路径做key存成modules不就行了吗？
 
 相对路径是会冲突的，我们只有用绝对路径做key才能是准确的资源标识

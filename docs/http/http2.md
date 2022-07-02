@@ -34,7 +34,7 @@ http1.1中手动关闭一个持久连接是 `Connetion:close`
 
 浏览器不允许更多的TCP连接原因是：假设一个客户端可以同时建立无限制的TCP连接，客户数一多同一时间会对服务器造成很大压力(极端情况也就是DDOS攻击)
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220226155840.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220226155840.png)
 
 ## http2的全双工模式
 http1.1的队头阻塞等问题，证明通过允许多个TCP连接并不能解决问题，必须要1个TCP连接支持并发才能很好的提高性能(同时解决建立多个TCP连接的耗时)

@@ -1,3 +1,33 @@
+### 搭建运行时自动路由工程
+运行时加载资源除了用amd的require.js
+
+### webpack构建前全量生成路由方案
+
+### 打包一个资源后umd挂载
+还能抛出变量
+
+### monorepo写一个自己的简易脚手架，用来做学习操练场
+- 使用cdn的
+- vue2
+- vue3
+
+### 前端监控
+
+### 后端nest.js
+
+### vant-ui源码
+内置依赖的项目管理方式
+
+### 用web components 搭建前端组件库
+移动端
+pc端-难度大：table和树状组件可以锻炼
+
+### nodejs搭建后端微服务
+
+### 自动生成组件库文档支持web components
+
+## 学习开源的web components组件库源码
+
 ### http缓存策略+CDN缓存+serviceWorker缓存 笔记及视频
 
 ### https证书加密概念 笔记及视频

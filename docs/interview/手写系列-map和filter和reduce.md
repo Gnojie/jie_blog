@@ -10,7 +10,7 @@
 `map`只接收一个回调函数
 重点是**回调函数接收3个参数**
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220405143447.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220405143447.png)
 
 ```js
 function myMap(arr, cb) {

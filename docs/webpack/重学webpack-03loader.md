@@ -1,7 +1,7 @@
 ## 分析css-loader
 在webpack中配置使用loader，webpack编译过程就会把资源内容传递进loader，loader返回出js
 
-没错所有资源经过loader都是返回js，如css、图片等
+没错**所有资源经过loader都是返回js**，如css、图片等
 
 css会被css-loader处理好css中的模块化,如`背景图`和`@import css`的操作
 返回一段没被使用的js
@@ -68,16 +68,32 @@ p { color:red }
 
 同理图片资源等，也是会变为一个普通的引用路径的js代码
 
-## 实现一个markdown的loader
+## 创建一个自定义loader
 loader的编写也十分简单
 
 ```js
-// mdLoader.js
+// myLoader.js
 module.exports = (source)=>{
-  // 1. 处理md文件内容成html字符串
+  // 1. 处理文件内容
   return // 2. 返回结果要是合法js
 }
 ```
+
+```js
+module.exports = {
+  entry: './index.js'
+  module: {
+    rules: [
+      { test: /\.js$/, use: './myLoader.js' },
+    ],
+  },
+}
+```
+
+可以发现👆
+使用自定义的 `loader` 配置 `use` 是路径**字符串**，而不是loader函数
+
+
 
 ## webpack怎么加载使用loader
 > 可以看出`loader`就是一个辅助函数
@@ -109,6 +125,25 @@ for(let item of rules) {
   }
 }
 ```
+
+## 实现一个markdown的loader
+
+```js
+// mdLoader.js
+module.exports = (source)=>{
+  // 1. 处理md文件内容成html字符串
+  return // 2. 返回结果要是合法js
+}
+```
+
+## 结合自己的简易编译器
+> 前面[简易编译器](./重学webpack-02模块化原理.md)中，我们可以看出第一步入口文件的依赖分析就用到了babel提供的AST解析工具🔧
+> 可以预想到其他类型入口文件进入这里就会被babel解析工具给报错了
+
+所以 `loader` 的首要作用就是转译非js的文件成js，再给到AST解析工具(`babel`提供)
+
+那我们就在第一步前插入判断文件类型，匹配配置中的rules调用配置的loader
+
 
 [深入 Vue Loader 原理](https://juejin.cn/post/7039918272111869988)
 [Webpack 案例 —— vue-loader 原理分析](https://juejin.cn/post/6937125495439900685)

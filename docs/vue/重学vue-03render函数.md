@@ -7,7 +7,7 @@
 
 要理解render就要知道Vue的DOM渲染过程
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220316194111.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220316194111.png)
 
 👆我们知道Vue用的是`虚拟DOM`渲染成`真实DOM`(关于`虚拟DOM`的意义、性能`，我们会另外分析)
 > 我们把这样的节点描述为`“虚拟节点 (virtual node)”`，也常简写它为`“VNode”`
@@ -36,6 +36,12 @@
 注意: 容易有的误区，我们常用的vue库版本是runtime版，这个版本不支持直接写template的代码渲染成真实DOM，[vue对外的资源js为什么这么多版本](./重学vue-01模板语法.html#`、运行时版-runtime)中我们尝试用runtime版运行模版语法会报错，runtime版只能通过`render函数`渲染出真实DOM
 
 ---
+
+## 写一个不考虑虚拟dom的render
+```js
+
+
+```
 
 > 我们现在先把注意力放在单个的`虚拟节点`上，不考虑树状`虚拟DOM`的数据协作(后面再补)
 

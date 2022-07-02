@@ -61,7 +61,7 @@ export default {
 > 
 > [自定义指令 - 官方文档](https://cn.vuejs.org/v2/guide/custom-directive.html)
 > 
-> ![](https://gitee.com/luojinan1/markdown-img/raw/master/20220317215853.png)
+> ![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220317215853.png)
 > 
 
 `v-bind:xx="msg"` `v-xx`是指令,`:xx`是参数

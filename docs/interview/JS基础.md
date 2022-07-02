@@ -33,7 +33,7 @@ TODO:
 ## this
 > 如何正确判断 this？箭头函数的 this 是什么？
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220219170631.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220219170631.png)
 
 - 直接调用 foo ，不管 foo 函数被放在了什么地方，this 一定是 window
 - obj.foo() ，我们只需要记住，谁调用了函数，谁就是 this，this 是 obj 对象

@@ -29,14 +29,14 @@
 [浏览器渲染流程&Composite（渲染层合并）简单总结](https://segmentfault.com/a/1190000014520786)
 
 ### 1. 偏移translate替代定位布局的
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20211214201147.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20211214201147.png)
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20211214201309.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20211214201309.png)
 👆 不使用定位布局，而是直接用偏移来修改位置
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20211214201339.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20211214201339.png)
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20211214201404.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20211214201404.png)
 👆 定位布局修改位置绘触发回流(回流一定会触发重绘)，偏移修改位置则只会触发重绘
 
 问题：偏移可以完全替代定位布局？偏移会占文档流且无法设置zindex
@@ -61,7 +61,7 @@
 
 所以独立图层和开启GPU没有减少回流重绘，是利用内存优化加速了渲染
 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20211214215327.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20211214215327.png)
 直接修改margin，触发其他元素一起回流
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20211214215338.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20211214215338.png)
 只修改脱离文档流的元素位置，不影响其他元素

@@ -3,7 +3,7 @@
 > 首先把一些概念简单提一下
 
 👇 我们先简单的定义网络层(不是理想模型)
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220323210844.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220323210844.png)
 
 可以看出HTTPS并不是取代HTTP的新应用层，HTTP和HTTPS的区别仅仅是中间多了一层协议，其他网络相关的东西是没有区别的
 
@@ -68,11 +68,11 @@ RSA算法是非对称加密的核心TODO:
 5. 后续双方用加密后密钥加密数据传输
 
 👆 黑客解不开加密后的密钥，但是黑客拿着加密后的密钥，可以用反解对称加密的形式，解开用户的数据
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220323222753.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220323222753.png)
 
 上诉2种方案的问题都出在，密钥由服务器生成一个唯一的，虽然加密了但是陷入对称加密里一样的问题，所以我们要不同客户端生成不同的密钥，这个步骤交给客户端做
 如👇
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220323214743.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220323214743.png)
 
 可以看到这样不可避免的多了一些往返消耗，因为服务器要给客户端公钥，而客户端还要给服务器密钥，才能开始通信
 

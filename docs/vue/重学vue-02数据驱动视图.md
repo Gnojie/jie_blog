@@ -8,7 +8,7 @@
 ## `React`的数据驱动视图
 > 在说Vue的数据驱动视图前，我们先看看`react`的驱动形式是通过[setState()](https://react.docschina.org/docs/state-and-lifecycle.html)
 > 
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220306154527.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220306154527.png)
 我们仿照这种形式，再我们的vue类中加一个`setData`方法 👇
 
 ```js
@@ -50,7 +50,7 @@ class Vue{
 
 ## Vue的数据驱动视图
 > Vue会把这种数据叫做响应式数据，实现的响应式的过程叫做数据劫持、数据代理、数据监听
-![](https://gitee.com/luojinan1/markdown-img/raw/master/20220307233604.png)
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220307233604.png)
 
 原理相信大家耳熟能详，`Vue2`使用 [Object.defineProperty](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) 的API重写对象属性的`get、set`，这也是Vue2不支持IE9以下的原因
 
