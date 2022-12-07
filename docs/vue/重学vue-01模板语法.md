@@ -161,14 +161,17 @@ vue3的CDN资源
 ![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20220305233901.png)
 
 ```js
-var Vue = (()=>{ return class })
+var Vue = ((result)=>{ return {...} })({})
 ```
 👆 用闭包限制内部变量的同时又挂在全局变量上
 
-IIFEs vs UMD ？
+[IIFEs vs UMD ？](https://zhuanlan.zhihu.com/p/304552279)
 - UMD 兼容其他形式的模块化，`require('cdn/xx')`等
 - IIEFs不能这么引用
 - IIEFs只能用于html加载，连nodejs环境引入也没用
+
+可以隐藏一些局部变量，前端人要是不懂这个可能学的是假前端
+用来代替 UMD 作为纯粹给前端使用的写法
 
 > 思考🤔: Vue3为什么不考虑支持UMD
 - UMD主要用于让资源同时支持nodejs和浏览器环境，现在更推荐用ESM即可(需要本地启WEB服务)
