@@ -43,7 +43,7 @@ npm init @xxx/foo -> npx @xxx/create-foo
 npx cowsay "你好"
 ```
 运行结果为
-```console
+```
  _______
 < 你好 >
  -------

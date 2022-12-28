@@ -37,7 +37,7 @@ packages:
 ```
 
 4. 创建 node 脚本, 一键创建子包
-```mjs
+```js
 import { promises } from 'fs'
 import path from 'path'
 import util from 'util'

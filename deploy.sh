@@ -8,7 +8,7 @@
 set -e
 
 # 构建
-yarn build
+pnpm build
 
 # 进入待发布的目录
 cd docs/.vitepress/dist

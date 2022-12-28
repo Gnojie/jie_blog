@@ -16,10 +16,10 @@ export function getFileName() {
     filePathPreList.forEach((item,i)=>{
       const tocItemTemp = tocItem.find(tocConfig=>tocConfig.text===filePathList[i])
       if(tocItemTemp){
-        tocItem = tocItemTemp.children
+        tocItem = tocItemTemp.items
       }else{
-        const pushIndex = tocItem.push({text:item,children:[]})
-        tocItem = tocItem[pushIndex-1].children
+        const pushIndex = tocItem.push({text:item,items:[],collapsible:true,collapsed:true})
+        tocItem = tocItem[pushIndex-1].items
       }
     })
     const obj = {text:fileName,link:`/${filePath}`}
