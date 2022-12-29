@@ -107,7 +107,7 @@ npm init -y
 ```
 ## 二、实现问答式配置
 问答配置主要依赖于[prompts库](https://github.com/terkelg/prompts#readme)
-<!-- ![prompts介绍](/static/img/vue/prompts介绍.jpg) -->
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/prompts介绍.jpg)
 
 ```js
 const qaList = [

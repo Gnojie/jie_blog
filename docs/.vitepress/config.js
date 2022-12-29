@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 import initPage from './initPage'
 
 export default defineConfig({
-  // base: "/note/",
+  base: "/notepage/",
   title: "罗锦安的blog",
   description: "vue、js、nodejs等等的学习记录",
   lang: 'zh',
