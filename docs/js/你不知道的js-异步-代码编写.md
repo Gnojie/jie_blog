@@ -6,3 +6,6 @@
 
 
 ## 异步逻辑写法-prmomise
+
+
+[JS 的异步机制一探 - 字节前端](https://zhuanlan.zhihu.com/p/591212268)

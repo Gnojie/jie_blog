@@ -18,7 +18,23 @@ class SomePlugin {
 
 ## Tapable
 
+```js
+const {
+  SyncHook,
+  SyncBailHook,
+  SyncWaterfallHook,
+  SyncLoopHook,
+  AsyncParallelHook,
+  AsyncParallelBailHook,
+  AsyncSeriesHook,
+  AsyncSeriesBailHook,
+  AsyncSeriesWaterfallHook
+} = require("tapable");
+```
 
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20221214170130.png)
+
+[前端插件化方案研究[1]——webpack 插件机制](https://juejin.cn/post/7167581508952129573)
 
 > [插件式可扩展架构设计心得](https://zhuanlan.zhihu.com/p/372381276)
 
