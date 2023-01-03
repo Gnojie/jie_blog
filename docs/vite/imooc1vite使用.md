@@ -6,6 +6,7 @@
 - `native ESM base build setup` - 基于原生ESM的构建方式
 - `improves DX` - `Developer Experience` 提高开发体验
 - `bare module` - 裸模块 非路径式的import如 node_modules
+- `Rebasing` - 变基 猜测是指自动拼接相对路径的baseUrl
 
 ## 概念
 
@@ -164,7 +165,26 @@ Use the Type-Only Imports and Export syntax
 
 ### JSX/TSX
 
+首先JSX/TSX语法是React创建的，所以纯的JSX语法是按照React的需要而定义的
+也就不会有vue的模版语法功能(指令、指令、全局组件等)
+所以vue需要额外的扩展 `vue-jsx`
 
+vite内置提供JSX/TSX编译通过esbuild，因此react不需要额外安装jsx相关插件，而vue则需要安装`@vitejs/plugin-jsx`
+
+> If not using JSX with React or Vue, custom jsxFactory and jsxFragment can be configured using the esbuild option. For example for Preact:
+
+```js
+// vite.config.js
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  esbuild: {
+    jsxFactory: 'h',
+    jsxFragment: 'Fragment',
+  },
+})
+```
+👆 vite基于esbuild来编译jsx，因此如果需要非react和非vue，其他jsx语法，则可以配置[esbuild相关配置](https://esbuild.github.io/content-types/#jsx)来支持，包括一些额外的jsx编译功能
 
 ### CSS
 
