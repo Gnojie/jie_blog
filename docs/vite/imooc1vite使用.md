@@ -118,7 +118,7 @@ Vite并不提供HMR功能，而是提供一套通用的HMR API，由插件根据
 > It assumes type checking is taken care of by your IDE and build process (you can run `tsc --noEmit` in the build script or `install vue-tsc` and run` vue-tsc --noEmit` to also type check your *.vue files).
 > 👆 vite假定类型检查已经通过编辑器和打包过程处理好了，打包过程处理的话，需要手动配置执行 `tsc --noEmit` 另外.vue文件需要安装vue-tsc并执行`vue-tsc --noEmit`
 
-ts转译使用了esbuild，除了first init项目块，在HMR时也快
+ts转译使用了esbuild，除了first init项目速度快，在HMR时也快
 
 #### [仅含类型的import被不正确的打包]问题
 
@@ -153,7 +153,7 @@ Use the Type-Only Imports and Export syntax
 > To shim the environment of client side code in a Vite application
 > 👆 但是Vite同时也提供了一些业务代码的API(`import.meta.env`、`import.meta.hot`、`.svg`)，这些API的types需要手动导入
 
-导入这些API的方式有2种
+导入这些API的types方式有2种
 - 新建`env.d.ts`文件
   - `/// <reference types="vite/client" />`
   - 在这一行前写类型声明可以覆盖 `declare module '*.svg' {}`
@@ -188,16 +188,149 @@ export default defineConfig({
 
 ### CSS
 
+在webpack中需要
+- style-loader: 把处理后的css文件内容插入到`html`的`head`中
+- css-loader: 处理css中的模块化,如`背景图`和`@import css`的操作
+- postcss-loader: 类似babel对js的作用,通过给样式属性添加前缀来兼容各种高低版本的浏览器
+
+#### style-loader
+viteDevServer 内置处理inject css content to the html via a `<style>` tag with HMR support
+👆 也就是通过js插入css到html中，也就是内置了 `style-loader`
+
+#### css-loader
+而 处理css中url的css-loader，则内置为默认配置
+> pre-configured to support CSS `@import` inlining via `postcss-import`. Vite aliases are also respected for CSS `@import`
+> 👆 以前仅用于兼容浏览器添加css前缀的 postcss，现在还提供很多其他转译功能如 `postcss-import` 就提供了 `css-loader` 的功能
+> 关于`postcss-import` 配置则由vite设置成了默认配置，并且支持vite配置中的路径别名如 `@`
+> all CSS url() references, even if the imported files are in different directories, are always automatically rebased to ensure correctness.
+> css 中的 `url()` 语法同样的处理，并且额外提供自动变基功能，即使不在根目录的路径也能被处理成功
+> 🤔 不自动变基的话，不在根路径下的目录就引入不到了吗？需要额外做什么？
+
+#### postcss-loader
+
+Vite内置了读取[postcss配置文件](https://github.com/postcss/postcss-load-config)的逻辑，无需手动配置开启postcss，只需要在项目根路径创建相关配置文件即可
+如 `postcss.config.js` `.postcssrc`
+
+🤔 css压缩会发生在dev阶段吗？会的话这个内置逻辑是通过什么实现的？
+
+#### CSS Modules
+
+内置支持 `xx.module.css` 引入，通过 [css-modules github](https://github.com/css-modules/css-modules)这个库实现
+
+把css文件内容转化成类似json的对象数据 🤔 TODO: 不太了解这种写法的作用
+
+同样可以通过配置`vite.config.js`对相关功能进行配置如
+`css.modules.localsConvention: 'camelCaseOnly'` 可以实现驼峰命名方式获取css中的`xx-xx`形式的样式
+
+#### CSS 预处理器
+
+> Because Vite targets modern browsers only, it is recommended to use native CSS variables with PostCSS plugins that implement CSSWG drafts (e.g. [postcss-nesting](https://github.com/csstools/postcss-plugins/tree/main/plugins/postcss-nesting)) and author plain, future-standards-compliant CSS.
+
+目前有草案css支持嵌套写法，而postcss其实类似于css中的babel，提前支持草案语法因此可以引入并配置支持
+但是草案还是有大改的可能
+
 ### Static Assets
+
+相当于 webpack 的file-loader，处理如图片、字体、svg等资源引入在js的使用
+
+图片、字体、svg等资源路径，按照标准仅支持写在特定的地方，如 `img标签中的src`，而不支持用import引入作为js逻辑使用
+
+因此在构建工具中就要对这些内容做支持
+
+🤔 TODO: Vite文档没有解释用什么实现的,找到内置逻辑在源码分析中讲解
+
+另外Vite提供了url query params的方式修改js import 的资源内容
+- url
+- raw
+- worker - worker是js，但是每次引入都需要写很多重复的初始化worker的内容，Vite做的是自动初始化好Worker实例
+- ...
 
 ### JSON
 
+```js
+// import the entire object
+import json from './example.json'
+// import a root field as named exports - helps with tree-shaking!
+import { field } from './example.json'
+```
+👆 TODO: 同样没有讲解怎么把json转译成js对象，并支持 tree-shaking
+
 ### Glob Import
 
-### Dynamic Import
+[vite官方文档-Glob](https://vitejs.dev/guide/features.html#glob-import)
+
+```js
+const modules = import.meta.glob('./dir/*.js')
+
+// 👇 编译后  code produced by vite
+const modules = {
+  './dir/foo.js': () => import('./dir/foo.js'),
+  './dir/bar.js': () => import('./dir/bar.js'),
+}
+```
+
+因此使用 `modules` ,需要遍历或通过 `路径key` 取出，而取出的 `value` 是一个函数执行 `import()` ，因此取到value需要执行一下 `value()`
+
+关于这个工具方法的其他参数不一一讲解,需要时查看文档
+
+> - This is a Vite-only feature and is not a web or ES standard.
+> - The glob patterns are treated like import specifiers: they must be either relative (start with ./) or absolute (start with /, resolved relative to project root) or an alias path (see resolve.alias option).
+> - The glob matching is done via fast-glob - check out its documentation for supported glob patterns.
+> - You should also be aware that all the arguments in the import.meta.glob must be passed as literals. You can NOT use variables or expressions in them.
+>
+> 👆 `import.meta.glob()` 是vite内置逻辑往 `import.meta` 对象上挂载的自定义函数，不是JS官方API
+>  Glob 模式会被当成导入标识符：必须是相对路径（以 ./ 开头）或绝对路径（以 / 开头，相对于项目根目录解析）或一个别名路径
+> 🤔 什么叫当成导入标识符，所以要写路径
+> 基于 [fast-glob](https://github.com/mrmlnc/fast-glob)
+>  如👆的code🌰中，glob方法发生在构建工具编译时，而不是运行时，因此不能写变量，感觉可以优化成支持常量的变量
 
 ### WebAssenbly
 
+[vite官方文档-wasm](https://vitejs.dev/guide/features.html#webassembly)
+
+因为没有具体使用过，因此先略过
+
+vite会提供初始化实例的代码包装成一个未执行的Promise函数
+省去自己写初始化的重复代码
+
 ### Web Workers
 
+同 WebAssenbly
+
 ### Build Optimizations
+
+指 生产环境的打包优化，都基于rollup内置成默认配置了
+
+#### Async Chunk CSS Code Splitting
+
+默认把Async Chunk 中引入的CSS，也分割成单独的css文件，通过 JS用`<link>`插入html
+(如懒加载的路由)
+
+非懒加载的css都打成1个css吧
+
+#### js 分割
+
+rollup对js重复逻辑提取到 `common.js` 中
+
+这时候的请求顺序是 👇
+
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20230103130912.png)
+
+需要等异步chunk加载并解析完成，才开始请求 common.js
+
+🤔 但是 common.js 一般会在入口js的时候就依赖到并加载了吧
+
+Vite 通过一个预加载步骤自动重写代码，来分割动态导入调用，以实现当 A 被请求时，C 也将 同时 被请求
+
+common.js 也可能有更深的导入，在未优化的场景中，这会导致更多的网络往返。Vite 的优化会跟踪所有的直接导入，无论导入的深度如何，都能够完全消除不必要的往返
+
+🤔 TODO: 什么原理
+
+#### modulepreload
+
+Vite 会为入口 chunk 和它们在打包出的 HTML 中的直接引入自动生成 `<link rel="modulepreload">` 指令。
+
+🤔 什么原理？处理的是什么场景
+
+- [Using Native JavaScript Modules in Production Today](https://philipwalton.com/articles/using-native-javascript-modules-in-production-today/)
+- [JavaScript的未来是模块化？-中文](https://toutiao.io/posts/i3iukk3/preview)
