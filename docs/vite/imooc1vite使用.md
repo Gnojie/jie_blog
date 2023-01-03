@@ -120,7 +120,7 @@ Vite并不提供HMR功能，而是提供一套通用的HMR API，由插件根据
 
 ts转译使用了esbuild，除了first init项目速度快，在HMR时也快
 
-#### [仅含类型的import被不正确的打包]问题
+#### [仅含类型的import被不正确的打包]问题 TODO: p2-6
 
 > avoid potential problems: `type-only imports being incorrectly bundled`
 避免潜在的问题：`仅含类型的import被不正确的打包`
@@ -132,7 +132,7 @@ Use the Type-Only Imports and Export syntax
 
 🤔 TODO: why type-only imports will error in being incorrectly bundled
 
-#### TS配置要求(create-vite 问答选中ts时会自动生成)
+#### TS配置要求(create-vite 问答选中ts时会自动生成) TODO: p2-6
 这里并不是讲解生成的tsconfig的每一项的含义(会在create-vite原理中讲解TODO:)
 而是讲解一个vite项目支持ts的强制要求的配置项
 
@@ -218,6 +218,11 @@ Vite内置了读取[postcss配置文件](https://github.com/postcss/postcss-load
 内置支持 `xx.module.css` 引入，通过 [css-modules github](https://github.com/css-modules/css-modules)这个库实现
 
 把css文件内容转化成类似json的对象数据 🤔 TODO: 不太了解这种写法的作用
+
+看起来是为了提供复用样式，webpack的 `postcss` 使用过给所有的css全局注入公共样式，当时是建议只注入变量而不使用className的
+但是使用起来是，要js引入再作用于html，并不方便吧
+
+为了复用样式，写成全局样式其实也不会造成很多浪费吧
 
 同样可以通过配置`vite.config.js`对相关功能进行配置如
 `css.modules.localsConvention: 'camelCaseOnly'` 可以实现驼峰命名方式获取css中的`xx-xx`形式的样式
@@ -328,9 +333,78 @@ common.js 也可能有更深的导入，在未优化的场景中，这会导致�
 
 #### modulepreload
 
-Vite 会为入口 chunk 和它们在打包出的 HTML 中的直接引入自动生成 `<link rel="modulepreload">` 指令。
+Vite 会为入口 `chunk` 和它们在打包出的 `HTML` 中的直接引入自动生成 `<link rel="modulepreload">` 指令。
 
 🤔 什么原理？处理的是什么场景
 
+- [翻译篇 - ES 模块预加载和完整性](https://zhuanlan.zhihu.com/p/388537104)
 - [Using Native JavaScript Modules in Production Today](https://philipwalton.com/articles/using-native-javascript-modules-in-production-today/)
-- [JavaScript的未来是模块化？-中文](https://toutiao.io/posts/i3iukk3/preview)
+- [JavaScript的未来是模块化？-中文](https://mp.weixin.qq.com/s/uf88myQov-t7rDqbMkF5EQ)
+
+通过打包工具生成入口文件的所有依赖文件清单，设置到 `modulepreload` 可以立即请求并在主线程外进行解析
+
+但是兼容性不好，此时也可以考虑判断兼容性，让支持的浏览器用，不支持的则按照传统资源方式加载
+
+## 环境变量 env TODO: p2-9
+
+[vite官方文档-env and mode](https://vitejs.dev/guide/env-and-mode.html)
+
+全局变量挂载在 `import.meta.env` 对象上
+经过编译后，运行时访问对象上的属性，会被编译成常量而不是一个变量读取，因此不能写key不能写成变量`import.meta.env[key]`
+即，运行时不存在 `import.meta.env` 对象
+
+### build-in 内置环境变量
+- `import.meta.env.MODE` {string}
+- `import.meta.env.BASE_URL` {string}
+- `import.meta.env.PROD` {boolean}
+- `import.meta.env.DEV` {boolean}
+- `import.meta.env.SSR` {boolean}
+- 👆 根据运行构建脚本时相关配置自动生成对应的值
+
+### 自定义环境变量
+
+自动读取 `.env.[import.meta.env.MODE]` 文件 - 🤔 这种方式很常见，大家是都用一个底层库来实现吗？
+> [dotenv - github](https://github.com/motdotla/dotenv) is a zero-dependency module that loads environment variables from a .env file into process.env. Storing configuration in the environment separate from code is based on The [Twelve-Factor App](http://12factor.net/config) methodology.
+
+
+`.ignoregit`文件中配置了`*.local` 因此👇
+```bash
+.env                # loaded in all cases
+.env.local          # loaded in all cases, ignored by git
+.env.[mode]         # only loaded in specified mode
+.env.[mode].local   # only loaded in specified mode, ignored by git
+```
+
+### 支持ts
+可以在 `env.d.ts` 里配置 `import.meta.env` 的属性类型
+```ts
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_APP_TITLE: string
+  // more env variables...
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+```
+
+### 覆盖模式mode相关环境变量
+
+development/production 除了用于控制不同的环境变量，还用于控制不同的打包流程
+
+- dev 对应环境变量 import.meta.env.MODE = development
+- build 对应环境变量 import.meta.env.MODE = production
+
+当希望build的时候希望打成其他的环境变量而不是production
+`vite build --mode xxx` 读取的是 `.env.xxx`文件
+
+当希望多个测试环境用不同的变量但是用同一种打包模式
+```bash
+# .env.testing
+NODE_ENV=development
+```
+👆 非development/production模式时都要手动指定一下NODE_ENV用于打包流程
+
+
