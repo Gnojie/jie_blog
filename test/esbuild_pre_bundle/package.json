@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "esbuild": "^0.16.13",
     "koa": "^2.14.1",
     "koa-static": "^5.0.0"
   },
