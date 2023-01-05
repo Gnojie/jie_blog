@@ -1,4 +1,4 @@
-重新学习webpack,旨在理解运行webpack，是怎么编译目录下的各种文件的,如何做到接入各种laoder和plugin
+重新学习webpack,旨在理解运行webpack，是怎么编译目录下的各种文件的,如何做到接入各种 loader 和plugin
 
 在重新学习之前还是要明确webpack的概念，webpack是个模块打包工具
 
@@ -19,7 +19,7 @@
 - style-loader: 把处理后的css文件内容插入到`html`的`head`中
 - css-loader: 处理css中的模块化,如`背景图`和`@import css`的操作
 - sass-loader: 预处理器样式语法的解析器
-- post-loader: 类似babel对js的作用,通过给样式属性添加前缀来兼容各种高低版本的浏览器
+- postcss-loader: 类似babel对js的作用,通过给样式属性添加前缀来兼容各种高低版本的浏览器
 
 
 👆 提到的css-loader 处理css中的模块化, 是css中资源的模块化, 当在js中引入css并且想要模块化(局部样式互不影响)就是不同的概念了
