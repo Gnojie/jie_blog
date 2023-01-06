@@ -3,7 +3,7 @@
 
 概念：
 - `bundler-based build setup` - 基于打包器的构建方式
-- `native ESM base build setup` - 基于原生ESM的构建方式
+- `native ESM base build setup` - 基于原生ESM的构建方式: `rollup`、`parcel`
 - `improves DX` - `Developer Experience` 提高开发体验
 - `bare module` - 裸模块 非路径式的import如 node_modules
 - `Rebasing` - 变基 猜测是指自动拼接相对路径的baseUrl
@@ -36,11 +36,11 @@
 - 依赖: 纯js，不经常改动
   - 可能内部依赖大量模块(lodash-es、components libraries)
   - 可能是多种格式 CJS、ESM、UMD
-  - vite 预编译这些依赖通过esbuild
+  - 解决启动慢：vite 预编译这些依赖通过esbuild
 - 源码: 非纯js，经常改动
   - 需要转译 JSX、CSS、VUE/Svelte、TS
   - 不需要全部加载
-  - vite 基于原生ESM，相当于让浏览器接管打包程序的部分工作(模块化),vite只转译和按需提供源码
+  - 解决启动慢：vite 基于原生ESM，相当于让浏览器接管打包程序的部分工作(模块化),vite只转译和按需提供源码
 
 ### 解决 Slow Updates
 
