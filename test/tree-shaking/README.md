@@ -1,0 +1,4 @@
+- 提前在根路径创建 `dist` 目录(因为没写自动创建目录的逻辑)
+- 运行 `node core/index.js`
+- 入口文件 `src/index.js`
+- 出口文件 `dist/index.shaked.js`
