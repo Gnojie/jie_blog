@@ -4,21 +4,24 @@
 ## treeShaking 原理
 
 很多文章以及打包工具介绍 `tree-shaking` 功能都是讲解它的现象、效果和必须基于 `ESM`
+
 就仿佛只要用了 `ESM` 那么 `tree-shaking` 就是自动实现的
 
 - [webpack-treeshaking 官方文档](https://webpack.js.org/guides/tree-shaking/)
 - [rollup-treeshaking 官方文档](https://rollupjs.org/guide/en/#tree-shaking)
 
 > Rollup also **statically analyzes the code** you are importing, and will exclude anything that isn't actually used.
+> 
 > Since this approach can utilise explicit import and export statements, it is more effective than simply running an automated minifier to detect unused variables in the compiled output code.
 >
 > 👆 `this approach` 指的是Rollup对编译前的代码做 `statically analyzes the code`
-> 比传统的 Webpack 用压缩器来扫描编译后的代码内容中未使用的变量 要更有效
+> 
+> 比传统的 `Webpack` 用压缩器来扫描编译后的代码内容中未使用的变量 要更有效
 
 
 我们需要明白 `statically analyzes` 是一个手动的步骤，而不是自动的
 
-因为 静态分析 是对编译前的代码做扫描处理，因此模块化语法必须是静态的，而不是需要运行时才能清晰的语法，这也是 ESM 必须是现代打包器 tree-shaking 的大前提
+因为 **静态分析** 是对编译前的代码做扫描处理，因此模块化语法必须是静态的，而不是需要运行时才能清晰的语法，这也是 `ESM` 必须是现代打包器 `tree-shaking` 的大前提
 
 这也是许多文章讲解 `tree-shaking` 时主要讲解的方向( `ESM` 和 `CJS` 的静态语法和运行时语法区别 )
 

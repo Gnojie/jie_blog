@@ -5,8 +5,8 @@
 - `bundler-based build setup` - 基于打包器的构建方式
 - `native ESM base build setup` - 基于原生ESM的构建方式: `rollup`、`parcel`
 - `improves DX` - `Developer Experience` 提高开发体验
-- `bare module` - 裸模块 非路径式的import如 node_modules
-- `Rebasing` - 变基 猜测是指自动拼接相对路径的baseUrl
+- `bare module` - 裸模块 非路径式的 `import` 如 `node_modules`
+- `Rebasing` - 变基 猜测是指自动拼接相对路径的 `baseUrl`
 
 ## 概念
 
@@ -15,6 +15,7 @@
 > Vite aims to address these issues by leveraging new advancements in the ecosystem: the availability of native ES modules in the browser, and the rise of JavaScript tools written in compile-to-native languages.
 > 
 > Vite 旨在解决上述问题通过利用生态系统中的新进展：原生ES模块在浏览器上可用的，和越来越多 JavaScript 工具使用编译型语言编写
+> 
 > 👆 重点在于使用 **原生ESM模块化**、**编译型语言工具Rust**
 
 ### 解决 Slow Server Start
@@ -23,15 +24,15 @@
 > 
 > Vite 改进了开发服务器启动时间，通过在一开始将应用中的模块区分为两类: 依赖 和 源码
 
-- **Dependencies**: plain JavaScript that do not change often during development. 
-  - large dependencies (e.g. component libraries with **hundreds of modules** or like lodash-es) 
-  - various module **formats** (e.g. ESM or CommonJS).
-  - Vite **pre-bundles** dependencies using **esbuild**. esbuild is written in Go and pre-bundles dependencies 10-100x faster than JavaScript-based bundlers.
-- **Source code**: **non-plain** JavaScript
-  - needs **transforming** (e.g. JSX, CSS or Vue/Svelte components)
-  - will be **edited very often**
-  - not all source code needs to be **loaded at the same time** (e.g. with route-based code-splitting).
-  - Vite serves source code over **native ESM**. This is essentially letting the **browser take over part of the job of a bundler**: Vite only needs to transform and serve source code on demand, as the browser requests it. Code behind conditional dynamic imports is only processed if actually used on the current screen.
+- `Dependencies`: plain JavaScript that do not change often during development. 
+  - large dependencies (e.g. component libraries with `hundreds of modules` or like lodash-es) 
+  - various module `formats` (e.g. ESM or CommonJS).
+  - Vite `pre-bundles` dependencies using `esbuild`. esbuild is written in Go and pre-bundles dependencies 10-100x faster than JavaScript-based bundlers.
+- `Source code`: `non-plain` JavaScript
+  - needs `transforming` (e.g. JSX, CSS or Vue/Svelte components)
+  - will be `edited very often`
+  - not all source code needs to be `loaded at the same time` (e.g. with route-based code-splitting).
+  - Vite serves source code over `native ESM`. This is essentially letting the `browser take over part of the job of a bundler`: Vite only needs to transform and serve source code on demand, as the browser requests it. Code behind conditional dynamic imports is only processed if actually used on the current screen.
 
 - 依赖: 纯js，不经常改动
   - 可能内部依赖大量模块(lodash-es、components libraries)
