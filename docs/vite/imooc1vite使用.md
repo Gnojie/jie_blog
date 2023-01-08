@@ -418,7 +418,7 @@ development/production 除了用于控制不同的环境变量，还用于控制
 - dev 对应环境变量 import.meta.env.MODE = development
 - build 对应环境变量 import.meta.env.MODE = production
 
-当希望build的时候希望打成其他的环境变量而不是production
+当build的时候希望打成其他的环境变量而不是production
 `vite build --mode xxx` 读取的是 `.env.xxx`文件
 
 当希望多个测试环境用不同的变量但是用同一种打包模式
@@ -427,6 +427,34 @@ development/production 除了用于控制不同的环境变量，还用于控制
 NODE_ENV=development
 ```
 👆 非 `development/production` 模式时都要手动指定一下 `NODE_ENV` 用于打包流程
+
+这个定义的是 `VITE_USER_NODE_ENV` 变量 而不是 NODE_ENV
+
+🤔 `NODE_ENV` 的值只能由构建指令： `vite`、`vite build` 决定？
+
+也就是自定义 `NODE_ENV=prod` 对于 Vite 来说就是提供 development 的构建方式
+
+`NODE_ENV` 的作用？ `Vite` 内部逻辑才会使用到？并且内部先取了 `VITE_USER_NODE_ENV` 空时才取 `NODE_ENV` ？
+
+👆 也就是，如果业务代码中希望使用 `NODE_ENV` 也要有这段优先取 `VITE_USER_NODE_ENV` 的逻辑
+
+环境变量有2种定义方式
+1. 在 `vite.config.ts` 中的 `defind` 中配置
+2. 在 `env` 相关文件中配置
+
+读取方式也不同
+1. `process_env`
+2. `import.meta.env`
+
+注意：在 `CommonJS` 中无法使用 `import.meta.env` 因为根本没有 `import` 这个全局变量
+
+如果是在运行时经过 `ViteDevServer` 中的 `CJS` 会被转为 `ESM`，可能可以正常使用
+
+但是当 `CJS` 时提供给其他库(如 `tailiwindCSS` 配置文件)使用的，而其他库不会转化成 `ESM`，更不会对生成 `import` 全局变量
+
+
+
+
 
 
 ## HMR
