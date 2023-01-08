@@ -4,7 +4,8 @@
 }
 
 /* 改写原min-width: 1280px 才显示右侧目录 */
-@media (min-width: 375px) {
+/* FIXME: 移动端 宽度不足展示文章内容 右侧目录会出现水平滚动条 */
+/* @media (min-width: 375px) {
   .VPDoc .container {
     display: flex;
     justify-content: center;
@@ -13,4 +14,4 @@
   .VPDoc .aside {
     display: block;
   }
-}
+} */
