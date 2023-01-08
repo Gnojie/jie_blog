@@ -1,6 +1,8 @@
+黄老师的 [vue技术揭秘](https://ustbhuangyi.github.io/vue-analysis/)
+
 > 面试题，回答可能不详细。详细原理和发散思维可以另开文章分析
 
-### 什么是 MVVM？比之 MVC 有什么区别？
+## 什么是 MVVM？比之 MVC 有什么区别？
 
 > 不管是 React 还是 Vue，它们都不是 MVVM 框架，只是有借鉴 MVVM 的思路
 
@@ -40,7 +42,7 @@ ViewModel 只关心数据和业务的处理，不关心 View 如何处理数据�
 MVVM 最重要的并不是通过双向绑定或者其他的方式将 View 与 ViewModel 绑定起来
 而是通过 ViewModel 将视图中的状态和用户的行为分离出一个抽象，这才是 MVVM 的精髓
 
-### 什么是 Virtual DOM？为什么 Virtual DOM 比原生 DOM 快？
+## 什么是 Virtual DOM？为什么 Virtual DOM 比原生 DOM 快？
 
 TODO: 单独深入虚拟DOM，以及diff算法
 
@@ -74,7 +76,7 @@ DOM 是一个多叉树的结构
 - 实现组件的高度抽象化
 
 
-### 前端路由原理？两种实现方式有什么区别？
+## 前端路由原理？两种实现方式有什么区别？
 
 TODO: 单独深入前端应用路由原理
 
@@ -99,14 +101,14 @@ TODO: 单独深入前端应用路由原理
 - Hash 模式无需后端配置，并且兼容性好。History 模式在用户手动输入地址或者刷新页面的时候会发起 URL 请求，后端需要配置 index.html 页面用于匹配不到静态资源的时候
 
 
-### Vue 和 React 之间的区别
+## Vue 和 React 之间的区别
 
 Vue 的表单可以使用 v-model 支持双向绑定，相比于 React 来说开发上更加方便，当然了 v-model 其实就是个语法糖，本质上和 React 写表单的方式没什么区别。
 
 Vue 修改状态相比来说要简单许多，React 需要使用 setState 来改变状态，并且使用这个 API 也有一些坑点。并且 Vue 的底层使用了依赖追踪，页面更新渲染已经是最优的了，但是 React 还是需要用户手动去优化这方面的问题。
 
 
-### 生命周期钩子函数
+## 生命周期钩子函数
 
 在 beforeCreate 钩子函数调用的时候，是获取不到 props 或者 data 中的数据的，因为这些数据的初始化都在 initState 中。
 
@@ -123,7 +125,7 @@ Vue 修改状态相比来说要简单许多，React 需要使用 setState 来改
 
 销毁组件的钩子函数 beforeDestroy 和 destroyed。前者适合移除事件、定时器等等，否则可能会引起内存泄露的问题。然后进行一系列的销毁操作，如果有子组件的话，也会递归销毁子组件，所有子组件都销毁完毕后才会执行根组件的 destroyed 钩子函数。
 
-### 组件通信
+## 组件通信
 
 - 父子组件通信
   - 典型的单向数据流，父组件通过 props 传递数据，子组件不能直接修改 props， 而是必须通过发送事件的方式告知父组件修改数据。
@@ -140,7 +142,7 @@ Vue 修改状态相比来说要简单许多，React 需要使用 setState 来改
   -  Event Bus 
 
 
-### extend 能做什么
+## extend 能做什么
 
 作用是扩展组件生成一个构造器，通常会与 $mount 一起使用。
 
@@ -165,7 +167,7 @@ new SuperComponent({
 new SuperComponent().$mount('#app')
 ```
 
-### mixin 和 mixins 区别
+## mixin 和 mixins 区别
 
 mixin 用于全局混入，会影响到每个组件实例，通常插件都是这样做初始化的
 ```js
@@ -180,7 +182,7 @@ mixins 用于局部混入代码，比如上拉下拉加载数据这种逻辑等�
 
 注意： mixins 混入的钩子函数会先于组件内的钩子函数执行，并且在遇到同名选项的时候也会有选择性的进行合并
 
-### computed 和 watch 区别
+## computed 和 watch 区别
 
 TODO: 原理 重学vue-computed/watch
 
@@ -191,7 +193,7 @@ watch 监听到值的变化就会执行回调，在回调中可以进行一些�
 一般来说需要依赖别的属性来动态获得值的时候可以使用 computed，对于监听到值的变化需要做一些复杂业务逻辑的情况可以使用 watch。
 
 
-### keep-alive 组件有什么作用
+## keep-alive 组件有什么作用
 
 组件切换，保存一些组件的状态防止多次渲染，就可以使用 keep-alive 组件包裹需要保存的组件。
 
@@ -199,14 +201,14 @@ watch 监听到值的变化就会执行回调，在回调中可以进行一些�
 
 用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数
 
-### v-show 与 v-if 区别
+## v-show 与 v-if 区别
 v-show 只是在 display: none 和 display: block 之间切换。无论初始条件是什么都会被渲染出来，后面只需要切换 CSS，DOM 还是一直保留着的。所以总的来说 v-show 在初始渲染时有更高的开销，但是切换开销很小，更适合于频繁切换的场景。
 
 v-if 控制 Vue 底层的编译。当属性初始为 false 时，组件就不会被渲染，直到条件为 true，并且切换条件时会触发销毁/挂载组件，所以总的来说在切换时开销更高，更适合不经常切换的场景。
 
 可以基于 v-if 实现惰性渲染机制，如局部骨架等在必要的时候才去渲染组件，减少整个页面的初始渲染开销。
 
-### 组件中 data 什么时候可以使用对象
+## 组件中 data 什么时候可以使用对象
 
 考的是 JS 功底
 
@@ -214,7 +216,7 @@ v-if 控制 Vue 底层的编译。当属性初始为 false 时，组件就不会
 
 当我们使用 new Vue() 的方式的时候，无论我们将 data 设置为对象还是函数都是可以的，因为 new Vue() 的方式是生成一个根组件，该组件不会复用，也就不存在共享 data 的情况了
 
-### 响应式原理(数据变化，视图自动变化)
+## 响应式原理(数据变化，视图自动变化)
 
 Object.defineProperty() 监听对象属性 set 和 get 的事件
 
@@ -365,7 +367,7 @@ data.name = 'yyy'
 ```
 
 
-### Object.defineProperty 的缺陷
+## Object.defineProperty 的缺陷
 
 - 通过下标方式修改数组数据
 - 对象新增属性
@@ -447,7 +449,7 @@ methodsToPatch.forEach(function (method) {
 ```
 
 
-### 编译过程
+## 编译过程
 
 指vue文件的html部分模板()代码怎么编译成真实DOM的
 
@@ -459,7 +461,7 @@ methodsToPatch.forEach(function (method) {
 - 执行 render 函数生成 Virtual DOM
 - 映射为真实 DOM
 
-### NextTick 原理分析
+## NextTick 原理分析
 
 TODO: 重学vue-nextTick
 
@@ -498,4 +500,98 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
 }
 ```
 
-黄老师的 [vue技术揭秘](https://ustbhuangyi.github.io/vue-analysis/)
+## v-show和v-if的区别
+- show通过`css display` 控制显示和隐藏
+- if控制真正的渲染和销毁，而不是显示隐藏
+- 频繁切换用show，否则用if
+- TODO: css display 的本质是什么
+
+## v-for为什么要用key
+- for用的key不能是 index 和唯一随机值
+- diff算法通过选择器字符串和key来判断是否 sameNode
+- 用key方便diff算法，做到减少渲染次数，提升渲染性能
+
+## 描述Vue组件生命周期(父子组件)
+- 单组件生命周期图
+- 父子组件生命周期关系
+
+## Vue组件如何通信
+- 父子组件 props、$emit()
+- 自定义事件 直接用vue实例做eventbus, `event.$on 、event.$off 、event.$emit`
+- vuex
+
+## 描述组件渲染和更新过程/请描述响应式原理
+- 官方文档图示
+- 包含模版渲染成虚拟dom、数据双向绑定的getset拦截和观察、更新虚拟dom成真实dom的diff算法
+
+## v-model的实现
+- input元素的`value = this.xxx`
+- 绑定input事件 `this.xxx = $even.target.value`
+- data更新出发re-render
+
+## computed的特点
+- 有缓存，data不变不会重新计算(可以看看是怎么实现的)
+- 提高性能
+
+## 组件data为什么必须是一个函数
+- 每个vue文件都会编译到同一个vue实例下，多个组件的属性如果是对象会互相干扰，函数则会是一个闭包
+
+## 何时需要用到beforeDestory
+- 解除eventbus自定义事件时 `event.$off`
+- 清除定时器
+- 解绑自定义的DOM事件，如 window scroll 等
+
+## 什么是作用域插槽
+- 父组件想拿到子组件的数据如data时用到
+- TODO: 实现一个表格组件就可以知道了
+
+## vuex和 action 和 mutation 有何区别
+- action 中处理异步，mutation不可以
+- mutation一般做原子操作
+- action可以整个多个mutation
+
+## vue-router模式
+- hash模式
+- history模式 (服务器支持)
+- 实现原理
+
+## 将中间组件所有的props传递给子组件
+- `<child :topProps="$props">`
+- $attr
+
+## 何时用到keep-alive
+- 缓存组件，不需要重复渲染时,如多个静态tab页的切换
+- 优化性能
+
+## 用vNode描述一个dom结构
+<!-- ![5f604da2d0b8a32f36d6ee7242a94f0f.png](evernotecid://A8CC14F8-F351-4473-9E82-5EFAB88A4F7D/appyinxiangcom/18783918/ENResource/p1757) -->
+## 监听data变化的核心API
+- `Object.defineProperty`
+- 深度监听原理,监听数组的实现
+- 有何缺点
+
+## Vue如何监听数组变化
+- `Object.defineProperty`不能监听数组变化
+- 重新定义原型,重写`push、pop、splice`等方法
+- `Proxy`原生支持监听数组变化
+
+## Vue为何是异步渲染,$nextTick
+- 异步渲染(以及合并data修改),用于提高渲染性能
+- `$nextTick` 用于在DOM更新完之后,触发回调
+
+## 简述diff算法过程
+- `patch(elem,vnode)` 和 `patch(vnode,newVnode)`
+- `patchVnode` 和 `addVnodes` 和 `removeVnodes`
+- `updateChildren` (局部比对 key的重要性)
+
+## 虚拟dom是什么? 原理? 优缺点?
+## vue 和 react 在虚拟dom的diff上，做了哪些改进使得速度很快?
+> vue 和 react 里的key的作用是什么? 为什么不能用Index？用了会怎样? 如果不加key会怎样?
+
+## vue 的keep-alive的作用是什么？怎么实现的？如何刷新的?
+## vue 是怎么解析template的? template会变成什么? 
+> vue单文件组件 SFC 编译原理
+
+## History路由配置 nginx
+
+## vue的响应式开发比命令式有什么好处
