@@ -276,7 +276,9 @@ console.log('Server runing at part: 9080')
 ## CDN缓存
 
 上述的http缓存都是客户端自己的缓存，即只有当我访问过一次并缓存才能走缓存
+
 而CDN则可以做到多个客户端，只要有一个人访问，CDN服务器就可以缓存下来，下次其他人再访问到CDN就直接给你CDN中的缓存
+
 当然客户端访问CDN，还是一个http请求，只不过比直接访问源服务器要更快
 
 缓存CDN缓存的建议观看 [什么是CDN？CDN能为我们做什么？我们为什么要了解他？-bilibili](https://www.bilibili.com/video/BV1jS4y197zi)
@@ -295,8 +297,10 @@ console.log('Server runing at part: 9080')
 当我们必须要在缓存期内修改文件，并且不想影响用户体验，那么我们可以使用cdn服务商提供的强制更新缓存功能，主要注意的是，这里的强制更新是更新服务端缓存，http缓存依然按照http头部规则进行自己的缓存处理，并不会受到影响。
 
 **CDN其他应用举例**
-除了静态内容，CDN服务器还可以获取动态内容，如服务器时间，客户端访问源服务器(中间链路长可能断连)时间可能不准或是获取不到
-那就让客户端获取CDN的服务器时间，源服务器也以CDN服务器时间为准
+
+除了静态内容，CDN服务器还可以获取动态内容，如服务器时间
+
+因为客户端访问源服务器(中间链路长可能断连)时间可能不准或是获取不到，就可以让客户端获取CDN的服务器时间，源服务器也以CDN服务器时间为准
 
 ## hash
 > 在讨论理想缓存模型前，我们先看看资源hash的采用形式
@@ -367,9 +371,9 @@ hash和文件的对应关系
 需要注意的是压缩的步骤由谁去做
 
 ### webpack的hash、chunkhash和contenthash区别
-- hash：根据打包中所有的文件计算出的hash值。在一次打包中，所有出口文件的filename获得的[hash]都是一样的。
-- chunkhash：根据打包过程中当前chunk计算出的hash值。如果Webpack配置是多入口配置，那么通常会生成多个chunk，每个chunk对应的出口filename获得的[chunkhash]是不一样的
-- contenthash有点像chunkhash，是根据打包时CSS内容计算出的hash值。一般在使用提取CSS的loader或plugin的时候，我们使用contenthash
+- `hash`：根据打包中所有的文件计算出的hash值。所有产物文件的filename获得的 `[hash]` 都是一样的。当修改任一文件，都会生成新的 `hash`
+- `chunkhash`：根据打包过程中当前chunk的文件计算出的hash值。如果 `Webpack` 配置是多入口配置，那么通常会生成多个chunk，每个chunk对应的出口filename获得的 [chunkhash] 是不一样的，1个 `chunk` 对应多个产物 `file`，因此打包过程判断到其中一个file改变，将会生成新的 `chunkHash` 其他几个产物file 即使没有修改，也会使用新的hash 来不取缓存中资源
+- `contenthash` 根据产物文件内容计算出的hash值
 
 ## 参考资料
 - [http缓存与cdn缓存配置指南](https://juejin.cn/post/6844903709982490638)

@@ -428,15 +428,24 @@ NODE_ENV=development
 ```
 👆 非 `development/production` 模式时都要手动指定一下 `NODE_ENV` 用于打包流程
 
-这个定义的是 `VITE_USER_NODE_ENV` 变量 而不是 NODE_ENV
+这个定义的是 `VITE_USER_NODE_ENV` 变量 而不是 `NODE_ENV`
+
+---
 
 🤔 `NODE_ENV` 的值只能由构建指令： `vite`、`vite build` 决定？
 
-也就是自定义 `NODE_ENV=prod` 对于 Vite 来说就是提供 development 的构建方式
+`NODE_ENV` 的值确实由 构建指令决定，但是对 `Vite` 来说env中自定义的 `VITE_USER_NODE_ENV` 优先级会更高
+
+即: 当指令是 `build` 但是 `VITE_USER_NODE_ENV` 是 `development` 时 `Vite` 的构建逻辑将是 `dev` 而不是 `build` (可能只要有值且非 `production` 就会是 `dev`)
+
+也就是自定义 `NODE_ENV=prod` 对于 Vite 来说就是提供 `development` 的构建方式
+
+---
+
 
 `NODE_ENV` 的作用？ `Vite` 内部逻辑才会使用到？并且内部先取了 `VITE_USER_NODE_ENV` 空时才取 `NODE_ENV` ？
 
-👆 也就是，如果业务代码中希望使用 `NODE_ENV` 也要有这段优先取 `VITE_USER_NODE_ENV` 的逻辑
+👆 也就是，如果业务代码中希望使用到 `NODE_ENV` 也要有这段优先取 `VITE_USER_NODE_ENV` 的逻辑
 
 环境变量有2种定义方式
 1. 在 `vite.config.ts` 中的 `defind` 中配置
