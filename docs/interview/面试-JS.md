@@ -21,8 +21,9 @@
 
 ## 类数组有哪些，如何转换
 
-## For of 和 for in 的区别
+## For of 和 for in 、for await of 的区别
 
+TODO:
 
 ## 23.script 标签中 defer 和 async 的区别？
 > html加载js，有两个步骤:1.下载js 2.加载js

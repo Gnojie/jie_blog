@@ -236,7 +236,7 @@ function getValue(val){
 ---
 > 题外话，搜索`算法 括号` 找到[leetcode](https://leetcode-cn.com/problems/valid-parentheses/)上的匹配有效括号算法题看看
 
-[有效括号校验](/interview/算法01.html#有效括号校验)
+[有效括号校验](../interview/面试-数据结构.md#有效括号校验)
 
 ---
 
