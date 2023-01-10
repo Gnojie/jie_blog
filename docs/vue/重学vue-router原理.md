@@ -148,7 +148,7 @@ function onLoad () {
 👆 可以看出跳转不会触发 `reload` 但是浏览器的前进后退没有根据 `URL` 渲染相应的页面内容，而且在跳转后的路径刷新时, 这个静态服务器会报 `404`
 
 
-> 每当激活同一文档中不同的历史记录条目时，`popstate` 事件就会在对应的 `window` 对象上触发。如果当前处于激活状态的历史记录条目是由 `history.pushState()` 方法创建的或者是由 `history`.`replaceState()` 方法修改的，则 `popstate` 事件的 `state` 属性包含了这个历史记录条目的 `state` 对象的一个拷贝。 - [popstate - MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/popstate_event)
+> 每当激活同一文档中不同的历史记录条目时，`popstate` 事件就会在对应的 `window` 对象上触发。如果当前处于激活状态的历史记录条目是由 `history.pushState()` 方法创建的或者是由 `history.replaceState()` 方法修改的，则 `popstate` 事件的 `state` 属性包含了这个历史记录条目的 `state` 对象的一个拷贝。 - [popstate - MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/popstate_event)
 
 > 调用 `history.pushState()` 或者 `history.replaceState()` 不会触发 `popstate` 事件。`popstate` 事件只会在浏览器某些行为下触发，比如点击后退按钮（或者在 `JavaScript` 中调用 `history.back()` 方法）。即，在同一文档的两个历史记录条目之间导航会触发该事件。
 
@@ -204,7 +204,8 @@ window.addEventListener('popstate', ()=>{
 
 ## 补充
 
-- 除了 [pushState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/pushState) 还有 [replaceState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/replaceState)
+- 上面都是通过 `a标签` 跳转的, 但是2种模式的跳转是截然不同的! `hash` 时就是 `a标签` 默认事件直接修改 `URL`, 但是 `history` 时是手动改写成我们封装的跳转事件
+- `History API` 除了 [pushState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/pushState) 还有 [replaceState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/replaceState)
 - 本文只是讲解 `Vue` 路由(前端路由)的实现所基于的底层逻辑
 - `VueRouter` 还把这些路由模式封装成一个 `Class类` 以及提供渲染组件的功能, 并通过 `Vue plugin` 的形式抛出 - 这部分为 [VueRouter源码分析](./源码分析-vueRouter.md)
 - 上面原生 `HTML/JS` 实现的源码 [html代码](https://github.com/luojinan/note-by-vitepress/tree/master/test/vue_router)
