@@ -1,0 +1,36 @@
+<html>
+<body>
+   <!-- 1. 通过a标签触发 URL 变化, 省去 Js 写跳转逻辑 -->
+   <ul>
+      <li><a href='/home.html'>home</a></li>
+      <li><a href='/about'>about</a></li>
+   </ul>
+
+   <!-- 2. 根据 URL Hash 显示的页面内容 placeholder -->
+   <!-- 当然可以不用 placeholder 直接往 body 下加 DOM -->
+   <div id="routeView"></div>
+</body>
+<script>
+  let routerView = routeView
+  // 3. 监听页面首次加载
+  window.addEventListener('DOMContentLoaded', onLoad)
+  function onLoad () {
+    console.log('DOMContentLoaded 触发 onload')
+      // 6. 根据首次加载时的 URL 渲染对应的页面内容
+      routerView.innerHTML = location.pathname
+      // 4. 遍历现有所有 a标签 绑定点击事件禁用原逻辑
+      var linkList = document.querySelectorAll('a[href]')
+      linkList.forEach(el => el.addEventListener('click', function (e) {
+        console.log('1. 阻止a标签默认事件 2. pushState 修改 URL 3. 根据 URL 渲染相应页面内容')
+         e.preventDefault()
+         // 5. 使用 `History API` 来跳转 `a标签` 上的 `href` 指定页面
+         history.pushState({}, '', el.getAttribute('href'))
+         routerView.innerHTML = location.pathname
+      }))
+  }
+
+  window.addEventListener('popstate', ()=>{
+      routerView.innerHTML = location.pathname
+  })
+</script>
+</html>
