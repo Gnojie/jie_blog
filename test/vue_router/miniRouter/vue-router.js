@@ -60,7 +60,15 @@
   // 把 `vueRouter` 作为 `VuePlugin` 注入 `Vue实例` 时挂载的全局组件/方法
   VueRouter.install = function(Vue) {
     console.log('Vue.use VueRouter.install')
-    Vue.component('router-link', { render(){}} )
+    Vue.component('router-link', {
+      props:{
+        to:String // 目标路由
+      },
+      render(h){
+        // ❕ 记得 return
+        return h('a', { attrs: {href: this.to} }, this.$slots.default)
+      }
+    })
     Vue.component('router-view', { render(){}} )
   }
 
