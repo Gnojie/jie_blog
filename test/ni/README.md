@@ -227,3 +227,101 @@ async function run() {
 
 run() // --> 'pnpm add {0}'
 ```
+
+
+处理命令行参数
+
+[Boolean -MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+```js
+const args = process.argv.slice(2).filter(Boolean)
+```
+
+```js
+const a = [1, 2, "b", 0, {}, "", NaN, 3, undefined, null, 5];
+const b = a.filter(Boolean); // [1, 2, "b", {}, 3, 5]
+
+// 等价于
+const b = a.filter(function (x) { return Boolean(x); });
+```
+
+`Boolean` 本质是一个接收参数的函数, 在 `filter` 中接收到数组项的参数并返回 `true/false` 被 `filter` 过滤
+
+`pnpm dev vite -D` --> `‘pnpm add vite -D’`
+
+至此, 我们已经用js逻辑处理好了区分包管理器和简写命令以及拼接参数得到目标命令字符串的逻辑
+
+接下来只要执行这段字符串即可
+
+`pnpm add execa -D`
+
+[execa-github](https://github.com/sindresorhus/execa)
+
+```ts
+import { execaCommand } from 'execa'
+
+// readonly cwd?: string | URL; Current working directory of the child process. @default process.cwd()
+await execaCommand(command, { stdio: 'inherit', encoding: 'utf-8' })
+```
+
+至此通过 npm script 执行工具脚本(esno执行ts)的功能实现了
+
+接着我们需要做成 nodejs 的 bin 脚本 只能用 js 或者 sh
+
+也就是需要使用的js库打包工具, 第一印象里是使用优于 webpack 的rollup
+
+但是随着各种技术的进步, 我们可以试试其他不错的 js库打包工具
+
+tsup
+
+unbuild 基于rollup, 又是一个内置默认配置的类似vue-cli 的工具呀...
+
+会根据 package.json 中的 js 库相关属性进行内置打包模式
+
+TODO: 具体配置含义
+
+命令行执行 unbuild 脚本 默认读取 src 下的入口文件
+
+需要修改要新建 build.config.ts 配置文件
+
+👇 `build.config.ts`
+```ts
+import { defineBuildConfig } from 'unbuild'
+
+export default defineBuildConfig({
+  entries: [
+    './src/commands/ni'
+  ],
+  clean: true,
+  declaration: true,
+  rollup: {
+    emitCJS: true,
+    inlineDependencies: true,
+  },
+})
+```
+👆 不配置 `declaration` `declaration` 将只生成 `dist/ni.mjs`
+
+配置上才会生成 `ni.cjs` `ni.d.ts`
+
+那 package.json 上的属性不自动读咯...
+
+
+
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20230116115737.png)
+
+
+
+🤔 为什么要打包📦
+
+为了作为全局依赖吗？
+
+别人安装了这个包，假如自己也有安装过的话这个依赖就重复了
+
+ni 则不打包, 把这些作为前置依赖, 不是更好？ 还是说因为 bin 文件一定要没有外部依赖的代码？
+
+👇 `bin/ni.mjs`
+```js
+#!/usr/bin/env node
+'use strict'
+import '../dist/ni.mjs'
+```

@@ -1,5 +1,6 @@
 import path from 'path'
 import { findUp } from "find-up";
+import { execaCommand } from 'execa'
 
 type Agent = 'pnpm' | 'yarn' | 'npm'
 
@@ -46,16 +47,21 @@ const AGENTS = {
 type Command = keyof typeof AGENTS.npm
 
 // 根据包管理器名称 以及需要匹配的key 输出完整指令
-function getCommand(agent: Agent, command:Command) {
+function getCommand(agent: Agent, command:Command, args:string[]) {
   const c = AGENTS[agent][command]
-  return c
+  // 拼接命令行参数如 ni xxx 命令行参数是 xxx
+  return c.replace('{0}', args.join(' ')).trim()
+  // return c
 }
 
 async function run() {
   const agent = await detect()
   if(!agent) return
-  const command = getCommand(agent, 'add')
+  const args = process.argv.slice(2).filter(Boolean)
+  const command = getCommand(agent, 'add', args)
   console.log(command)
+  // readonly cwd?: string | URL; Current working directory of the child process. @default process.cwd()
+  await execaCommand(command, { stdio: 'inherit', encoding: 'utf-8' })
 }
 
 run()
