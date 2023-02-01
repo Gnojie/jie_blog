@@ -32,5 +32,10 @@ export default defineConfig({
         ...initPage()
       ],
     },
+    algolia: {
+      appId: '...',
+      apiKey: '...',
+      indexName: '...'
+    }
   },
 })
