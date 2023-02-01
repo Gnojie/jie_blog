@@ -1,27 +1,27 @@
-
-### JS单线程处理异步任务
+# 事件循环
+## JS单线程处理异步任务
 
 > 进程和线程的区别？为什么JS设计成单线程
 
-两个名词都是 CPU 工作时间片的一个描述
+两个名词都是 `CPU` 工作时间片的一个描述
 
-- **进程**: 描述了 CPU 在运行指令及加载和保存上下文所需的时间，放在应用上来说就代表了一个程序
+- **进程**: 描述了 `CPU` 在运行指令及加载和保存上下文所需的时间，放在应用上来说就代表了一个程序
 - **线程**: 是进程中的更小单位，描述了执行一段指令所需的时间
 
 把这些概念拿到浏览器中来说
-- 打开一个 Tab 页时，其实就是创建了一个进程
+- 打开一个 `Tab` 页时，其实就是创建了一个进程
 - 一个进程中可以有多个线程
   - 渲染线程
-  - JS 引擎线程
-  - HTTP 请求线程(发起一个请求时，其实就是创建了一个线程，当请求结束后，该线程可能就会被销毁)
+  - `JS` 引擎线程
+  - `HTTP` 请求线程(发起一个请求时，其实就是创建了一个线程，当请求结束后，该线程可能就会被销毁)
   - ...
 
 在 JS 运行的时候可能会阻止 UI 渲染
 这说明了 `渲染线程` `JS 引擎线程` 两个线程是互斥的
 
-因为 JS 可以修改 DOM，如果不互斥，在 JS 执行的时候 UI 线程还在工作，就可能导致不能安全的渲染 UI
+因为 `JS` 可以修改 DOM，如果不互斥，在 `JS` 执行的时候 UI 线程还在工作，就可能导致不能安全的渲染 `UI`
 
-得益于 JS 是单线程运行的
+得益于 `JS` 是单线程运行的
 - 可以节省内存?
 - 节约上下文切换时间?
 - 不需要手动上锁
@@ -29,7 +29,7 @@
   - 同时有两个操作对数字进行了加减，这时候结果就出现了错误
   - 解决办法，在读取的时候加锁，直到读取完毕之前都不能进行写入操作
 
-### JS单线程的背景
+## JS单线程的背景
 
 > 因为 javescript 创建之初，只是为了运行在浏览器端
 > 面对浏览器特有的操作DOM场景，不能因为各种并发多线程逻辑，导致DOM被操作得晕头转向
@@ -37,7 +37,7 @@
 
 而我们现在编写的异步函数，是基于单线程的事件循环机制进行的逻辑顺序排队(阻塞)执行，形成一种延迟执行的效果
 
-### 同步任务-执行栈
+## 同步任务-执行栈
 
 栈内存作用
 - 执行代码（主线程）
@@ -47,10 +47,10 @@
 
 ![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/1670d2d20ead32ec.gif)
 
-- 首先会执行一个 main 函数
+- 首先会执行一个 `main` 函数
 - 然后执行我们的代码
 - 根据先进后出的原则，后执行的函数会先弹出栈
-- foo 函数后执行，当执行完毕后就从栈中弹出了
+- `foo` 函数后执行，当执行完毕后就从栈中弹出了
 
 
 ![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/webcomponents.gif)
@@ -58,7 +58,7 @@
 👇 平时也能控制台的函数异常信息中看到执行栈的函数关系
 
 ![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20221201204530.png)
-👆 报错在 foo 函数，foo 函数又是在 bar 函数中调用的
+👆 报错在 `foo` 函数，`foo` 函数又是在 bar 函数中调用的
 
 👇 当执行栈存储过多函数，释放不掉就会导致爆栈(**栈可存放的函数是有限制**)
 
@@ -66,13 +66,13 @@
 
 
 
-### 异步
+## 异步
 
-> setTimeout 0 并不是立即执行，可以看出JS处理异步是有一定顺序的
+> `setTimeout 0` 并不是立即执行，可以看出JS处理异步是有一定顺序的
 
+js(执行代码)是单线程的，浏览器并不是单线程的，js执行一些 `webApi` ，交给浏览器，浏览器可以开启别的线程
 
-js(执行代码)是单线程的，浏览器并不是单线程的，js执行一些 webApi ，交给浏览器，浏览器可以开启别的线程
-如 setTimeout 的 webApi 浏览器是在别的线程里倒计时
+如 `setTimeout` 的 `webApi` 浏览器是在别的线程里倒计时
 
 ```js
 function demo() {
@@ -84,7 +84,6 @@ function demo() {
 demo()
 ```
 👆 多个回调函数会在耗时操作(2秒)结束以后同时执行，这样可能就会带来性能上的问题
-
 
 👇 用 [requestAnimationFrame](https://developer.mozilla.org/zh-CN/docs/Web/API/window/requestAnimationFrame) 实现一个准确的 `setInterval` 
 ```js
@@ -121,16 +120,16 @@ TODO: 通过该函数来实现 `setTimeout`
 ![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/webcomponents1.gif)
 
 
-### 宏任务
+## 宏任务
 
 宏任务包括 `script` ， `setTimeout` `，setInterval` `，setImmediate` ，`I/O`，`UI` `rendering。`
 
 
-### 微任务
+## 微任务
 
 微任务包括 `process.nextTick` `，promise` ，`MutationObserver`
 
-### 浏览器的事件循环
+## 浏览器的事件循环
 
 JS 引擎线程，执行 JS 代码往执行栈中放入函数，当遇到异步的代码时，会被挂起并在需要执行的时候加入到 Task（有多种 Task） 队列中(宏任务队列、微任务队列)
 
@@ -153,7 +152,7 @@ JS 引擎线程，执行 JS 代码往执行栈中放入函数，当遇到异步�
 因为宏任务中如 `script` 
 浏览器会先执行一个宏任务，内部产生异步代码的话才会先执行微任务(循环 ♻️)
 
-### nodejs的事件循环
+## nodejs的事件循环
 
 [掘金小册简单介绍](http://www.qianduan.site/html/7-Event-Loop.htm)
 
@@ -236,7 +235,7 @@ Promise.resolve().then(function() {
 ```
 和浏览器中的输出是一样的，`microtask` 永远执行在 `macrotask` 前面
 
-### Node 的 process.nextTick
+## Node 的 process.nextTick
 
 独立于 `Node` 的 `Event Loop` 之外的，它有一个自己的队列，当每个阶段完成后
 如果存在 `nextTick` 队列，就会清空队列中的所有回调函数，并且优先于其他 `microtask` 执行。
