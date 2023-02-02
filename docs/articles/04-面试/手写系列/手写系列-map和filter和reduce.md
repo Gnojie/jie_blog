@@ -89,7 +89,7 @@ console.log(
 
 [使用函数组合实现管道-MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#使用函数组合实现管道)
 
-> 关于管道函数我们在[vue的过滤器](../vue/重学vue-05filter多余吗.md)中讲到过
+> 关于管道函数我们在[vue的过滤器](../../02-框架/vue/重学vue-05filter多余吗.md)中讲到过
 
 👇 开始手写实现`reduce`
 ```js

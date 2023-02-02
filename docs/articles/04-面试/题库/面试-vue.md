@@ -561,8 +561,8 @@ Vue在patch过程中判断两个节点是否是相同节点,key是一个必要�
 ## vue-router模式
 - hash模式
 - history模式 (服务器支持)
-- [SPA-router 实现原理](../vue/%E9%87%8D%E5%AD%A6vue-router%E5%8E%9F%E7%90%86.md)
-- [vue-router 源码分析](../vue/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-vueRouter.md)
+- [SPA-router 实现原理](../../02-%E6%A1%86%E6%9E%B6/vue/%E9%87%8D%E5%AD%A6vue-router%E5%8E%9F%E7%90%86.md)
+- [vue-router 源码分析](../../02-%E6%A1%86%E6%9E%B6/vue/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-vueRouter.md)
 
 ## 将中间组件所有的props传递给子组件
 - `<child :topProps="$props">`

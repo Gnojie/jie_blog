@@ -77,7 +77,7 @@ function Object() {
 `this instanceof Object`用this是否是实例自身判断是不是在new的写法在 [手写bind](./手写系列-callbind.md#实现bind) 的时候我们用过这种写法
 
 ---
-思考🤔: [new Vue()干了什么](../vue/重学vue-01模板语法.md#Vue构造函数)
+思考🤔: [new Vue()干了什么](../../02-框架/vue/重学vue-01模板语法.md#Vue构造函数)
 
 ---
 ## 代码地址
