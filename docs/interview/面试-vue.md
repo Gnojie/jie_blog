@@ -523,7 +523,9 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
 - diff算法通过选择器字符串和key来判断是否 sameNode
 - 用key方便diff算法，做到减少渲染次数，提升渲染性能
 
-
+key的作用主要是为了更高效的对比虚拟DOM中每个节点是否是相同节点;
+Vue在patch过程中判断两个节点是否是相同节点,key是一个必要条件，渲染一组列表时，key往往是唯一标识，所以如果不定义key的话，Vue只能认为比较的两个节点是同一个，哪怕它们实际上不是，这导致了频繁更新元素，使得整个patch过程比较低效，影响性能;
+从源码中可以知道，Vue判断两个节点是否相同时主要判断两者的key和元素类型等，因此如果不设置key,它的值就是undefined，则可能永    远认为这是两个相同的节点，只能去做更新操作，这造成了大量的dom更新操作，明显是不可取的。
 
 ## 描述组件渲染和更新过程/请描述响应式原理
 - 官方文档图示
@@ -587,6 +589,23 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
 - `patch(elem,vnode)` 和 `patch(vnode,newVnode)`
 - `patchVnode` 和 `addVnodes` 和 `removeVnodes`
 - `updateChildren` (局部比对 key的重要性)
+
+在js中,渲染真实DOM的开销是非常大的, 比如我们修改了某个数据,如果直接渲染到真实DOM, 会引起整个dom树的重绘和重排。那么有没有可能实现只更新我们修改的那一小块dom而不要更新整个dom呢？此时我们就需要先根据真实dom生成虚拟dom， 当虚拟dom某个节点的数据改变后会生成有一个新的Vnode, 然后新的Vnode和旧的Vnode作比较，发现有不一样的地方就直接修改在真实DOM上，然后使旧的Vnode的值为新的Vnode。
+
+diff的过程就是调用patch函数，比较新旧节点，一边比较一边给真实的DOM打补丁。在采取diff算法比较新旧节点的时候，比较只会在同层级进行。
+在patch方法中，首先进行树级别的比较
+new Vnode不存在就删除 old Vnode
+old Vnode 不存在就增加新的Vnode
+都存在就执行diff更新
+当确定需要执行diff算法时，比较两个Vnode，包括三种类型操作：属性更新，文本更新，子节点更新
+新老节点均有子节点，则对子节点进行diff操作，调用updatechidren
+如果老节点没有子节点而新节点有子节点，先清空老节点的文本内容，然后为其新增子节点
+如果新节点没有子节点，而老节点有子节点的时候，则移除该节点的所有子节点
+老新老节点都没有子节点的时候，进行文本的替换
+
+updateChildren
+将Vnode的子节点Vch和oldVnode的子节点oldCh提取出来。
+oldCh和vCh各有两个头尾的变量StartIdx和EndIdx，它们的2个变量相互比较，一共有4种比较方式。如果4种比较都没匹配，如果设置了key，就会用key进行比较，在比较的过程中，变量会往中间靠，一旦StartIdx>EndIdx表明oldCh和vCh至少有一个已经遍历完了，就会结束比较。
 
 ## 虚拟dom是什么? 原理? 优缺点?
 ## vue 和 react 在虚拟dom的diff上，做了哪些改进使得速度很快?
