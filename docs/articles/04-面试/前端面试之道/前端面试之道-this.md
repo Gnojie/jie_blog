@@ -44,7 +44,7 @@ console.log(a()()()) // window
 
 ### 人为修改this
 
-> [手写call/bind](./手写系列-callbind.md)
+> [手写call/bind](../%E6%89%8B%E5%86%99%E7%B3%BB%E5%88%97/手写系列-callbind.md)
 
 ---
 
