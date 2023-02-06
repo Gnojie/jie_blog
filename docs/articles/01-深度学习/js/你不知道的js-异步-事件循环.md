@@ -1,4 +1,6 @@
 # 事件循环
+
+[从event loop规范探究javaScript异步及浏览器更新渲染时机](https://github.com/aooy/blog/issues/5)
 ## JS单线程处理异步任务
 
 > 进程和线程的区别？为什么JS设计成单线程

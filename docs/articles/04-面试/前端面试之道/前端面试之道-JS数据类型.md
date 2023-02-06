@@ -169,6 +169,39 @@ let a = {
 
 🤔: `[] == ![]` 的转化过程 TODO:
 
+```
+[] == ![]
+[] == false
+[] == ToNumber(false)
+[] == 0
+ToPrimitive([]) == 0
+'' == 0
+0 == 0 // -> true
+```
+
+```js
+let obj = {
+  [Symbol.toPrimitive](hint) {
+    switch (hint) {
+      case 'number':
+        return 123;
+      case 'string':
+        return 'str';
+      case 'default':
+        return 'default';
+      default:
+        throw new Error();
+     }
+   }
+};
+
+// [防爬虫标识-沙海听雨]
+
+2 * obj // 246
+3 + obj // '3default'
+obj == 'default' // true
+String(obj) // 'str'
+```
 ---
 
 #### JS 中类型转换只有三种情况
