@@ -79,6 +79,12 @@ typeof在对值类型 `number、string、boolean 、null 、 undefined` 以及�
 
 为了弥补这一点，`instanceof` 从原型的角度，来判断某引用属于哪个构造函数，从而判定它的数据类型。
 
+### 判断数组
+1. `Object.prototype.toString.call()`
+    - 当除了 `Object` 类型的对象外，其他类型直接使用 `toString` 方法时，会直接返回都是内容的字符串，所以我们需要使用 `call/apply` 方法来改变执行上下文
+2. `instanceof` - 原理: 递归原型链判断 `constructor`, 只能用来判断对象类型，原始类型不可以。并且所有对象类型 `instanceof Object` 都是 `true`
+3. `Array.isArray()`
+
 ## var && let && const
 
 ES6之前创建变量用的是 `var` 之后创建变量用的是 `let/const`

@@ -1,6 +1,48 @@
 # 事件循环
 
 [从event loop规范探究javaScript异步及浏览器更新渲染时机](https://github.com/aooy/blog/issues/5)
+
+[常见异步笔试题，请写出代码的运行结果#7](https://github.com/Advanced-Frontend/Daily-Interview-Question/issues/7)
+
+```js
+//请写出输出内容
+async function async1() {
+    console.log('async1 start');
+    await async2();
+    console.log('async1 end');
+}
+async function async2() {
+	console.log('async2');
+}
+
+console.log('script start');
+
+setTimeout(function() {
+    console.log('setTimeout');
+}, 0)
+
+async1();
+
+new Promise(function(resolve) {
+    console.log('promise1');
+    resolve();
+}).then(function() {
+    console.log('promise2');
+});
+console.log('script end');
+
+/*
+script start
+async1 start
+async2
+promise1
+script end
+async1 end
+promise2
+setTimeout
+*/
+```
+
 ## JS单线程处理异步任务
 
 > 进程和线程的区别？为什么JS设计成单线程
