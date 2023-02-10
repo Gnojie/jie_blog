@@ -5,32 +5,50 @@
 
 `Worker` (包括`ServerWorker`) 只能引用远程在线地址, 不能使用本地文件系统的地址, 因此需要启一个本地静态服务才能使用
 
-👇 主线程
-```js
-const worker1 = new Worker('/testWorker') // 调用 worker
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20230210112015.png)
 
-worker1.postMessage({name:'worker1', info: '主线程设置的参数'}) // 主线程 -> worker线程 发送信息
-// 主线程 接收 worker线程信息
-worker1.onmessage({ data }=>{
-  console.log(data)
-})
+👇 主线程
+```html
+<!DOCTYPE html>
+<head><title>WebWorker</title></head>
+<body>
+  <h1>web worker</h1>
+  <script>
+    const worker1 = new Worker('./testWorker.js') // 调用 worker
+
+    worker1.postMessage({name:'worker1', info: '主线程设置的参数'}) // 主线程 -> worker线程 发送信息
+    // 主线程 接收 worker线程信息
+    worker1.onmessage = ({ data }) => {
+      console.log('主线程输出', data)
+    }
+  </script>
+</body>
+</html>
 ```
 
 👇 `worker线程`
 ```js
-self.onmessage({ data } => {
-  console.log(data)
+self.onmessage = ({ data }) => {
+  console.log('worker线程输出', data)
   self.postMessage({ name: data.name, info: `Worker处理后的info: ${data.info}` });
-})
+}
 ```
+👆 注意 `onmessage` 和 `postMessage` 不同, 不是函数 而是一个变量 用于赋值一个函数
 
-TODO: 示例 `html` 编写
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20230210113247.png)
 
 ## 实际案例
 
 [一文彻底了解Web Worker，十万条数据都是弟弟](https://juejin.cn/post/7137728629986820126)
 
 TODO: 示例 `vue` 编写
+
+使用 `performance api` 测试耗时, 想要看看线程通信耗时(不是逻辑执行耗时)
+
+发现通信耗时不对劲, 原因是 `performance` 是 `window` 下的api, 不同线程的 `window` 不一样, `worker` 中执行的 `performance.now()` 和 主线程中的 `performance.now()` 基准不一样
+
+![](https://kingan-md-img.oss-cn-guangzhou.aliyuncs.com/blog/20230210144421.png)
+👆 worker 线程 反而更耗时....
 
 ## 动态创建 worker 并调用
 
@@ -92,3 +110,4 @@ TODO: 改造👆实际案例的 vue 示例
 
 ## vue-worker ts及函数式改造
 
+[vueuse-useWebWorkerFn](https://vueuse.org/core/useWebWorkerFn/)

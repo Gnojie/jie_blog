@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<head><title>WebWorker</title></head>
+<body>
+  <h1>web worker</h1>
+  <script type="xxx">
+    const worker = new Worker('./testWorker.js') // 调用 worker
+
+    worker.postMessage({name:'worker', info: '主线程设置的参数'}) // 主线程 -> worker线程 发送信息
+    // 主线程 接收 worker线程信息
+    worker.onmessage = ({ data }) => {
+      console.log('主线程输出', data)
+    }
+  </script>
+  <script>
+    (()=>{
+      let startTime = performance.now();
+  
+      let arr = new Array(100000).fill(1).map(() => Math.random()* 10000);
+      let calcList = [
+        {type: 'sum', name: '总和'},
+        {type: 'average', name: '平均'},
+      ]
+  
+      const worker1 = new Worker('./testWorker1.js') // 调用 worker
+  
+      worker1.postMessage({name:'worker1', info: {arr,calcList}}) // 主线程 -> worker线程 发送信息
+      // 主线程 接收 worker线程信息
+      worker1.onmessage = ({ data }) => {
+        calcList = data.info.calcList
+        let endTime = performance.now();
+        console.log('通信耗时', + new Date() - data.time)
+        let duration = endTime - startTime;
+        console.log(`使用worker计算用时: ${duration} 毫秒`, calcList);
+      }
+    })()
+  </script>
+  <script>
+  (()=>{
+    let startTime = performance.now();
+
+    let arr = new Array(100000).fill(1).map(() => Math.random()* 10000);
+    let calcList = [
+      {type: 'sum', name: '总和'},
+      {type: 'average', name: '平均'},
+    ]
+
+    calcList.forEach(item=>{
+      if(item.type === 'sum') {
+        const sum = arr.reduce((res, next) => res + next, 0)
+        item.res = sum
+      }
+      if(item.type === 'average') {
+        const sum = arr.reduce((res, next) => res + next, 0)
+        item.res = sum / arr.length
+      }
+    })
+    let endTime = performance.now();
+    let duration = endTime - startTime;
+    console.log(`无worker计算用时: ${duration} 毫秒`, calcList);
+  })()
+  </script>
+</body>
+</html>
