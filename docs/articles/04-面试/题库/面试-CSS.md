@@ -83,3 +83,18 @@ css渲染过程：布局(排列、重排、回流)->绘制(重绘)
 scss提供给组件父级下的选择器加deep，让这部分样式编译成全局样式，不带data码
 
 如果是原生css会不会遇到样式穿透的问题，如何解决
+
+## CSS盒模型
+css 盒子模型分为两种：`IE 怪异盒模型`，`标准盒模型`
+
+1. 盒模型
+- 内容(`content`)
+- 内边距(`padding`)
+- 边框(`border`)
+- 外边距(`margin`)
+2. 宽高区别
+- `W3C` 标准盒子的 `width/height` 直接为 `content`
+- `IE` 盒子的 `width/height` 为 `content + padding + border`
+3. `box-sizing` 可以转换盒子模型
+- `border-box(IE)`
+- `content-box(W3C,默认)`

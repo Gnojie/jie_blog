@@ -1,4 +1,3 @@
-## 判断 Array
 
 ## JS中的8种数据类型及区别
 
@@ -79,13 +78,32 @@ typeof在对值类型 `number、string、boolean 、null 、 undefined` 以及�
 
 为了弥补这一点，`instanceof` 从原型的角度，来判断某引用属于哪个构造函数，从而判定它的数据类型。
 
-### 判断数组
-1. `Object.prototype.toString.call()`
-    - 当除了 `Object` 类型的对象外，其他类型直接使用 `toString` 方法时，会直接返回都是内容的字符串，所以我们需要使用 `call/apply` 方法来改变执行上下文
-2. `instanceof` - 原理: 递归原型链判断 `constructor`, 只能用来判断对象类型，原始类型不可以。并且所有对象类型 `instanceof Object` 都是 `true`
-3. `Array.isArray()`
+## 判断 Array
 
-## var && let && const
+1. `ES6` 提供的新方法 `Array.isArray()`
+2. `Object.prototype.toString.call()`
+
+当除了 `Object` 类型的对象外，其他类型直接使用 `toString` 方法时，会直接返回都是内容的字符串，所以我们需要使用 `call/apply` 方法来改变执行上下文
+```js
+Object.prototype.toString.call(data) === '[object Array]'
+// or
+toString.call(data) === '[object Array]'
+```
+3. `instanceof` 判断
+
+原理: 递归原型链判断 `constructor`, 只能用来判断对象类型，原始类型不可以。并且所有对象类型 `instanceof Object` 都是 `true`
+```js
+// 如果为true，则arr为数组
+arr instanceof Array
+```
+
+🤔 `instanceof` 判断数组类型如此之简单，为何不推荐使用？
+
+`instanceof` 操作符的问题在于，如果网页中存在多个 `iframe` ，那便会存在多个 `Array` 构造函数，此时判断是否是数组会存在问题
+
+原型链也是可以篡改的，当通过`[Symbol.hasInstance]`修改原型链， `instanceof` 也不是百分之百可信
+
+## var let const
 
 ES6之前创建变量用的是 `var` 之后创建变量用的是 `let/const`
 
@@ -106,6 +124,41 @@ ES6之前创建变量用的是 `var` 之后创建变量用的是 `let/const`
 > let a
 
 6. let /const/function会把当前所在的大括号(除函数之外)作为一个全新的块级上下文，应用这个机制，在开发项目的时候，遇到循环事件绑定等类似的需求，无需再自己构建闭包来存储，只要基于let的块作用特征即可解决
+
+## 类数组如何转换为数组
+
+函数参数 `arguments` 就是一个类数组, 不具备数组的方法(`splice，split，push..`) 且类型是对象
+
+1. `Array.prototype.slice.call()`
+```js
+Array.prototype.slice.call(arrayLike) // ["1", "2"]
+```
+
+2. `Array.from()`
+`Array.from` 是 `ES6` 新增的方法，它可以将**类数组对象和可遍历(iterable)**转变为真正的数组。
+```js
+Array.from(arrayLike) // ["1", "2"]
+```
+
+3. `(...)`展开运算符
+```js
+const arrayLike = {
+    0: '1',
+    1: '2',
+    length: 2
+}
+// Uncaught TypeError: arrayLike is not iterable
+console.log([...arrayLike]) // ["1", "2"]
+```
+👆 写的普通类数组就无法使用`...`运算符
+因为 扩展运算符调用的是 `遍历器接口` 如果一个对象没有部署此接口就无法完成转换
+如果部署了`遍历器接口`，例如函数参数 `arguments` 类数组，便可以使用扩展运算符
+```js
+function fn() {
+    console.log([...arguments])
+}
+fn(1,2,3) // [1, 2, 3]
+```
 
 ## 作用域和作用域链
 
